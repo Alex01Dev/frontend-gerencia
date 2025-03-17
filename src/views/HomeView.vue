@@ -16,7 +16,7 @@
       <button class="next" @click="nextSlide">&#10095;</button>
     </div>
 
-    <!-- Mission, Vision, and About Us cards -->
+    <!-- Mission, Vision, Values, Services, and Team cards -->
     <div class="info-cards">
       <div class="mission-vision">
         <div class="card mission">
@@ -28,10 +28,26 @@
           <p>Ser un gimnasio líder, reconocido por calidad, innovación y enfoque integral en la salud, promoviendo un estilo de vida activo en nuestra comunidad.</p>
         </div>
       </div>
+      <div class="values-services">
+        <div class="card values">
+          <h3>Valores</h3>
+          <p>Integridad, compromiso, innovación, y excelencia son los valores que guían nuestras acciones y decisiones.</p>
+        </div>
+        <div class="card services">
+          <h3>Servicios Ofrecidos</h3>
+          <p>Ofrecemos entrenamientos personalizados, clases grupales, asesoramiento nutricional, y más para ayudar a nuestros miembros a alcanzar sus objetivos.</p>
+        </div>
+      </div>
       <div class="about-us">
         <div class="card">
           <h3>Sobre Nosotros</h3>
           <p>En Gym Bulls, la gerencia coordina y optimiza las operaciones para garantizar un servicio de excelencia. Nuestro equipo está comprometido con la mejora continua, creando un ambiente donde entrenadores y miembros alcancen su máximo potencial.</p>
+        </div>
+      </div>
+      <div class="team">
+        <div class="card">
+          <h3>Equipo de Gerencia</h3>
+          <p>Conoce a nuestro equipo de gerencia, compuesto por profesionales dedicados a brindar la mejor experiencia a nuestros miembros.</p>
         </div>
       </div>
     </div>
@@ -143,7 +159,7 @@ export default {
   background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(53, 31, 31, 0.76) 100%);
 }
 
-/* Cards de Misión, Visión y Sobre Nosotros */
+/* Cards de Misión, Visión, Valores, Servicios y Sobre Nosotros */
 .info-cards {
   display: flex;
   flex-direction: column;
@@ -153,7 +169,7 @@ export default {
   gap: 2rem;
 }
 
-.mission-vision {
+.mission-vision, .values-services {
   display: flex;
   justify-content: space-between;
   gap: 2rem;
@@ -171,9 +187,8 @@ export default {
   width: 100%;
 }
 
-.mission,
-.vision {
-  width: 45%; /* Un poco más anchas para las cards de Misión y Visión */
+.mission, .vision, .values, .services {
+  width: 45%; /* Un poco más anchas para las cards de Misión, Visión, Valores y Servicios */
 }
 
 .card:hover {
@@ -194,13 +209,13 @@ export default {
   line-height: 1.6;
 }
 
-.about-us {
+.about-us, .team {
   display: flex;
   justify-content: center;
   width: 80%;
 }
 
-.about-us .card {
+.about-us .card, .team .card {
   width: 100%; /* Ocupa el ancho completo */
 }
 </style>

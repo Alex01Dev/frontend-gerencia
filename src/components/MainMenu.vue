@@ -1,14 +1,13 @@
 <template>
   <nav class="navbar">
     <div class="navbar-brand">
-      <img src="@/assets/logo3.png" alt="GYM Bulls Logo" class="logo" />
+      <router-link to="/home" class="navbar-link">
+        <img src="@/assets/logo3.png" alt="GYM Bulls Logo" class="logo" />
+      </router-link>
       <span class="gym-name">GYM BULLS</span>
     </div>
     <span class="management-title">Gerencia</span>
     <ul class="navbar-menu">
-      <li class="navbar-item">
-        <router-link to="/home" class="navbar-link">Inicio</router-link>
-      </li>
       <li class="navbar-item">
         <router-link to="/sucursales" class="navbar-link">Sucursales</router-link>
       </li>
@@ -105,7 +104,6 @@ export default {
 }
 
 .navbar-link:hover {
-  background-color: #eb1f1f;
   transform: scale(1.05);
 }
 

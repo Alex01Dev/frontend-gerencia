@@ -2,16 +2,7 @@
   <div class="dashboard">
     <Menu />
     <div class="content">
-      <!-- Tabla de datos -->
-      <div class="table-container">
-        <div class="table-header">
-          <h2>Transferencias</h2>
-          <button @click="openModal(false)" class="add-transaction-button">Agregar Transacción</button>
-        </div>
-        <DataTable :data="tableData" :headers="headers" @edit="openModal(true, $event)" />
-      </div>
-
-      <!-- Gráficas a la derecha -->
+      <!-- Gráficas -->
       <div class="charts">
         <div class="chart-container">
           <Chart :chartData="chartData1" :chartOptions="chartOptions" chartType="line" />
@@ -19,6 +10,15 @@
         <div class="chart-container">
           <Chart :chartData="chartData2" :chartOptions="chartOptions" chartType="bar" />
         </div>
+      </div>
+
+      <!-- Tabla de datos -->
+      <div class="table-container">
+        <div class="table-header">
+          <h2>Transacciones</h2>
+          <button @click="openModal(false)" class="add-transaction-button">Agregar Transacción</button>
+        </div>
+        <DataTable :data="tableData" :headers="headers" @edit="openModal(true, $event)" />
       </div>
     </div>
 
@@ -46,18 +46,18 @@ export default {
       isEdit: false,
       currentTransaction: null,
       tableData: [
-        { nombreUsuario: 'Juan Pérez', metodoPago: 'Tarjeta de Crédito', monto: '$100', estatus: 'Completado', fechaRegistro: '2023-10-01', fechaActualizacion: '2023-10-01' },
-        { nombreUsuario: 'Alina Bonilla', metodoPago: 'Transferencia Bancaria', monto: '$150', estatus: 'Pendiente', fechaRegistro: '2023-10-01', fechaActualizacion: '2023-10-02' },
-        { nombreUsuario: 'Ana Gómez', metodoPago: 'Efectivo', monto: '$200', estatus: 'Completado', fechaRegistro: '2023-10-02', fechaActualizacion: '2023-10-03' },
-        { nombreUsuario: 'Carlos Ruiz', metodoPago: 'Tarjeta de Débito', monto: '$50', estatus: 'Cancelado', fechaRegistro: '2023-10-03', fechaActualizacion: '2023-10-04' },
-        { nombreUsuario: 'Laura Díaz', metodoPago: 'Transferencia Bancaria', monto: '$300', estatus: 'Completado', fechaRegistro: '2023-10-04', fechaActualizacion: '2023-10-05' },
-        { nombreUsuario: 'Amauri Garcia', metodoPago: 'Efectivo', monto: '$75', estatus: 'Pendiente', fechaRegistro: '2023-10-05', fechaActualizacion: '2023-10-06' },
-        { nombreUsuario: 'Maria Cruz', metodoPago: 'Efectivo', monto: '$75', estatus: 'Pendiente', fechaRegistro: '2023-10-05', fechaActualizacion: '2023-10-06' },
-        { nombreUsuario: 'Juan Carlos', metodoPago: 'Efectivo', monto: '$75', estatus: 'Pendiente', fechaRegistro: '2023-10-05', fechaActualizacion: '2023-10-06' },
-        { nombreUsuario: 'Alberto Vazquez', metodoPago: 'Efectivo', monto: '$75', estatus: 'Pendiente', fechaRegistro: '2023-10-05', fechaActualizacion: '2023-10-06' },
-        { nombreUsuario: 'Pedro Sánchez', metodoPago: 'Efectivo', monto: '$75', estatus: 'Pendiente', fechaRegistro: '2023-10-05', fechaActualizacion: '2023-10-06' },
+        { nombreUsuario: 'Juan Pérez', rol: 'Administrador', metodoPago: 'Tarjeta de Crédito', monto: '$100', detalles: 'Compra de equipo', estatus: 'Completado', fechaRegistro: '2023-10-01', fechaActualizacion: '2023-10-01', tipoTransaccion: 'Egreso' },
+        { nombreUsuario: 'Alina Bonilla', rol: 'Usuario', metodoPago: 'Transferencia Bancaria', monto: '$150', detalles: 'Pago de servicios', estatus: 'Pendiente', fechaRegistro: '2023-10-01', fechaActualizacion: '2023-10-02', tipoTransaccion: 'Egreso' },
+        { nombreUsuario: 'Ana Gómez', rol: 'Usuario', metodoPago: 'Efectivo', monto: '$200', detalles: 'Compra de suministros', estatus: 'Completado', fechaRegistro: '2023-10-02', fechaActualizacion: '2023-10-03', tipoTransaccion: 'Egreso' },
+        { nombreUsuario: 'Carlos Ruiz', rol: 'Administrador', metodoPago: 'Tarjeta de Débito', monto: '$50', detalles: 'Pago de servicios', estatus: 'Cancelado', fechaRegistro: '2023-10-03', fechaActualizacion: '2023-10-04', tipoTransaccion: 'Egreso' },
+        { nombreUsuario: 'Laura Díaz', rol: 'Usuario', metodoPago: 'Transferencia Bancaria', monto: '$300', detalles: 'Compra de equipo', estatus: 'Completado', fechaRegistro: '2023-10-04', fechaActualizacion: '2023-10-05', tipoTransaccion: 'Egreso' },
+        { nombreUsuario: 'Amauri Garcia', rol: 'Usuario', metodoPago: 'Efectivo', monto: '$75', detalles: 'Pago de servicios', estatus: 'Pendiente', fechaRegistro: '2023-10-05', fechaActualizacion: '2023-10-06', tipoTransaccion: 'Egreso' },
+        { nombreUsuario: 'Maria Cruz', rol: 'Usuario', metodoPago: 'Efectivo', monto: '$75', detalles: 'Pago de servicios', estatus: 'Pendiente', fechaRegistro: '2023-10-05', fechaActualizacion: '2023-10-06', tipoTransaccion: 'Egreso' },
+        { nombreUsuario: 'Juan Carlos', rol: 'Usuario', metodoPago: 'Efectivo', monto: '$75', detalles: 'Pago de servicios', estatus: 'Pendiente', fechaRegistro: '2023-10-05', fechaActualizacion: '2023-10-06', tipoTransaccion: 'Egreso' },
+        { nombreUsuario: 'Alberto Vazquez', rol: 'Usuario', metodoPago: 'Efectivo', monto: '$75', detalles: 'Pago de servicios', estatus: 'Pendiente', fechaRegistro: '2023-10-05', fechaActualizacion: '2023-10-06', tipoTransaccion: 'Egreso' },
+        { nombreUsuario: 'Pedro Sánchez', rol: 'Usuario', metodoPago: 'Efectivo', monto: '$75', detalles: 'Pago de servicios', estatus: 'Pendiente', fechaRegistro: '2023-10-05', fechaActualizacion: '2023-10-06', tipoTransaccion: 'Egreso' },
       ],
-      headers: ['Nombre Usuario', 'Método de Pago', 'Monto', 'Estatus', 'Fecha de Registro', 'Fecha de Actualización'],
+      headers: ['Nombre Usuario', 'Rol', 'Método de Pago', 'Monto', 'Detalles', 'Estatus', 'Fecha de Registro', 'Fecha de Actualización', 'Tipo de Transacción'],
       chartData1: {
         labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
         datasets: [
@@ -89,7 +89,7 @@ export default {
   methods: {
     openModal(isEdit, transaction = null) {
       this.isEdit = isEdit;
-      this.currentTransaction = transaction;
+      this.currentTransaction = isEdit ? transaction : { nombreUsuario: '', rol: '', metodoPago: '', monto: '', detalles: '', estatus: '', fechaRegistro: '', fechaActualizacion: '' };
       this.showModal = true;
     },
     handleTransaction(transaction) {
@@ -101,6 +101,7 @@ export default {
       } else {
         this.tableData.push(transaction);
       }
+      this.showModal = false;
     },
   },
 };
@@ -110,15 +111,15 @@ export default {
 .dashboard {
   display: flex;
   flex-direction: column;
-  height: 70%;
-  
+  height: 100vh;
 }
 
 .content {
   display: flex;
+  flex-direction: column;
   gap: 20px;
-  padding: 20px;
-  height: calc(100vh - 100px); /* Ajusta la altura del contenido */
+  padding: 100px;
+  height: calc(100vh - 60px); /* Ajusta la altura del contenido */
 }
 
 .add-transaction-button {
@@ -135,27 +136,10 @@ export default {
   background-color: #0056b3;
 }
 
-.table-container {
-  flex: 2;
-  background-color: #ffffff; /* Fondo blanco */
-  padding: 15px;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más suave */
-  overflow-x: auto;
-  transition: transform 0.3s ease;
-  height: calc(100vh - 60px); /* Ajusta la altura de la tabla */
-}
-
-.table-container:hover {
-  transform: scale(1.01);
-}
-
 .charts {
-  flex: 1;
   display: flex;
-  flex-direction: column;
-  gap: 15px;
-  height: calc(100vh - 130px); /* Ajusta la altura de las gráficas */
+  gap: 20px;
+  justify-content: space-between;
 }
 
 .chart-container {
@@ -163,7 +147,46 @@ export default {
   padding: 15px;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más suave */
-  height: calc(50% - 10px); /* Ajusta la altura de cada gráfica */
+  flex: 1;
+  height: 240px; /* Ajusta la altura de cada gráfica */
+}
+
+.table-container {
+  background-color: #ffffff; /* Fondo blanco */
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más suave */
+  overflow-x: auto;
+  transition: transform 0.3s ease;
+  flex-grow: 1; /* Permite que el contenedor de la tabla crezca para llenar el espacio disponible */
+  min-height: 610px; /* Altura mínima para el contenedor de la tabla */
+}
+
+.table-container:hover {
+  transform: scale(1.01);
+}
+
+.table-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-container th, .table-container td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+  white-space: normal; /* Evita que el texto se rompa en varias líneas */
+  overflow: hidden; /* Oculta el desbordamiento */
+  text-overflow: ellipsis; /* Añade puntos suspensivos al texto desbordado */
+}
+
+.table-container th {
+  background-color: #f4f4f4;
+  cursor: pointer;
+}
+
+.table-container th span {
+  margin-left: 5px;
 }
 
 h2 {

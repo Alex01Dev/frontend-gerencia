@@ -5,14 +5,26 @@
       <h1 class="inicio">Iniciar Sesión</h1>
       <h2>¡Bienvenido!</h2>
       <form @submit.prevent="login">
+
+        <!-- Campo de usuario -->
         <div class="form-group">
           <label for="username">Usuario</label>
           <input type="text" id="username" v-model="username" required />
         </div>
+        
+        <!-- Campo de correo electrónico -->
+        <div class="form-group">
+          <label for="email">Correo Electrónico</label>
+          <input type="email" id="email" v-model="email" required />
+        </div>
+
+        <!-- Campo de contraseña -->
         <div class="form-group">
           <label for="password">Contraseña</label>
           <input type="password" id="password" v-model="password" required />
         </div>
+
+        <!-- Botón de ingresar -->
         <button type="submit">Ingresar</button>
       </form>
       <p>
@@ -28,6 +40,7 @@ import api from "../api/api.js"; // Asegúrate de importar correctamente api.js
 export default {
   data() {
     return {
+      email: "", // Nuevo campo para el correo electrónico
       username: "",
       password: "",
     };
@@ -56,8 +69,6 @@ export default {
 };
 </script>
 
-
-
 <style scoped>
 .login {
   display: flex;
@@ -77,9 +88,11 @@ export default {
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(8px);
 }
-.inicio{
+
+.inicio {
   color: white;
 }
+
 .login-container {
   position: relative;
   background-color: rgba(255, 255, 255, 0.1);

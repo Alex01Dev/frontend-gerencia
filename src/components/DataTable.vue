@@ -9,7 +9,6 @@
             {{ header }}
             <span v-if="sortKey === index">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
           </th>
-          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -23,9 +22,6 @@
           <td>{{ item.fechaRegistro }}</td>
           <td>{{ item.fechaActualizacion }}</td>
           <td>{{ item.tipoTransaccion }}</td>
-          <td>
-            <button class="edit-button" @click="$emit('edit', item, index)">Editar</button>
-          </td>
         </tr>
       </tbody>
     </table>
@@ -124,7 +120,7 @@ export default {
 }
 
 table {
-  width:100%;
+  width: 100%;
   border-collapse: collapse;
 }
 
@@ -154,20 +150,6 @@ button {
 button:disabled {
   cursor: not-allowed;
   opacity: 0.5;
-}
-
-.edit-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 6px 12px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.edit-button:hover {
-  background-color: #0056b3;
 }
 
 .pagination-button {

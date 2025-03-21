@@ -2,15 +2,23 @@
   <div class="modal" v-if="isVisible">
     <div class="modal-content">
       <span class="close" @click="closeModal">&times;</span>
-      <h2>{{ isEdit ? 'Editar Transacción' : 'Nueva Transacción' }}</h2>
+      <h2>Nueva Transacción</h2>
       <div class="form-container">
         <form @submit.prevent="submitForm">
           <div class="form-group">
+            <label for="tipoTransaccion">Tipo de Transacción</label>
+            <select id="tipoTransaccion" v-model="form.tipoTransaccion" @change="handleTransactionTypeChange" required>
+              <option value="ingreso">Ingreso</option>
+              <option value="egreso">Egreso</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label for="rol">Rol</label>
-            <select id="rol" v-model="form.rol" @change="handleRoleChange" required>
-              <option value="visitante">Visitante</option>
-              <option value="administrador">Administrador</option>
-              <option value="colaborador">Colaborador</option>
+            <select id="rol" v-model="form.rol" required>
+              <option v-if="form.tipoTransaccion === 'ingreso'" value="usuario">Usuario</option>
+              <option v-if="form.tipoTransaccion === 'ingreso'" value="visitante">Visitante</option>
+              <option v-if="form.tipoTransaccion === 'egreso'" value="colaborador">Colaborador</option>
+              <option v-if="form.tipoTransaccion === 'egreso'" value="administrador">Administrador</option>
             </select>
           </div>
           <div class="form-group" v-if="form.rol !== 'visitante'">
@@ -31,20 +39,9 @@
           </div>
           <div class="form-group">
             <label for="estatus">Estatus</label>
-            <input type="text" id="estatus" v-model="form.estatus" required />
+            <input type="text" id="estatus" v-model="form.estatus" readonly />
           </div>
-          <div class="form-group">
-            <label for="fechaRegistro">Fecha de Registro</label>
-            <input type="date" id="fechaRegistro" v-model="form.fechaRegistro" required />
-          </div>
-          <div class="form-group">
-            <label for="tipoTransaccion">Tipo de Transacción</label>
-            <select id="tipoTransaccion" v-model="form.tipoTransaccion" required>
-              <option value="egreso">Egreso</option>
-              <option value="ingreso">Ingreso</option>
-            </select>
-          </div>
-          <button type="submit">{{ isEdit ? 'Actualizar' : 'Guardar' }}</button>
+          <button type="submit">Guardar</button>
         </form>
       </div>
     </div>
@@ -55,8 +52,6 @@
 export default {
   props: {
     isVisible: Boolean,
-    isEdit: Boolean,
-    transaction: Object,
   },
   data() {
     return {
@@ -66,21 +61,10 @@ export default {
         metodoPago: '',
         monto: '',
         detalles: '',
-        estatus: '',
-        fechaRegistro: '',
-        tipoTransaccion: '',
+        estatus: 'procesando',
+        tipoTransaccion: 'ingreso',
       },
     };
-  },
-  watch: {
-    transaction: {
-      immediate: true,
-      handler(newVal) {
-        if (newVal) {
-          this.form = { ...newVal };
-        }
-      },
-    },
   },
   methods: {
     closeModal() {
@@ -90,10 +74,9 @@ export default {
       this.$emit('submit', this.form);
       this.closeModal();
     },
-    handleRoleChange() {
-      if (this.form.rol === 'visitante') {
-        this.form.nombreUsuario = '';
-      }
+    handleTransactionTypeChange() {
+      // Reset the role when transaction type changes
+      this.form.rol = '';
     },
   },
 };

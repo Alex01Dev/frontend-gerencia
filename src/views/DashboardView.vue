@@ -16,14 +16,14 @@
       <div class="table-container">
         <div class="table-header">
           <h2>Transacciones</h2>
-          <button @click="openModal(false)" class="add-transaction-button">Agregar Transacción</button>
+          <button @click="openModal" class="add-transaction-button">Agregar Transacción</button>
         </div>
-        <DataTable :data="tableData" :headers="headers" @edit="openModal(true, $event)" />
+        <DataTable :data="tableData" :headers="headers" />
       </div>
     </div>
 
-    <!-- Modal para agregar/editar transacción -->
-    <TransactionModal :isVisible="showModal" :isEdit="isEdit" :transaction="currentTransaction" @close="showModal = false" @submit="handleTransaction" />
+    <!-- Modal para agregar transacción -->
+    <TransactionModal :isVisible="showModal" @close="showModal = false" @submit="handleTransaction" />
   </div>
 </template>
 
@@ -43,8 +43,6 @@ export default {
   data() {
     return {
       showModal: false,
-      isEdit: false,
-      currentTransaction: null,
       tableData: [
         { nombreUsuario: 'Juan Pérez', rol: 'Administrador', metodoPago: 'Tarjeta de Crédito', monto: '$100', detalles: 'Compra de equipo', estatus: 'Completado', fechaRegistro: '2023-10-01', fechaActualizacion: '2023-10-01', tipoTransaccion: 'Egreso' },
         { nombreUsuario: 'Alina Bonilla', rol: 'Usuario', metodoPago: 'Transferencia Bancaria', monto: '$150', detalles: 'Pago de servicios', estatus: 'Pendiente', fechaRegistro: '2023-10-01', fechaActualizacion: '2023-10-02', tipoTransaccion: 'Egreso' },
@@ -87,20 +85,11 @@ export default {
     };
   },
   methods: {
-    openModal(isEdit, transaction = null) {
-      this.isEdit = isEdit;
-      this.currentTransaction = isEdit ? transaction : { nombreUsuario: '', rol: '', metodoPago: '', monto: '', detalles: '', estatus: '', fechaRegistro: '', fechaActualizacion: '' };
+    openModal() {
       this.showModal = true;
     },
     handleTransaction(transaction) {
-      if (this.isEdit) {
-        const index = this.tableData.findIndex(t => t === this.currentTransaction);
-        if (index !== -1) {
-          this.tableData.splice(index, 1, transaction);
-        }
-      } else {
-        this.tableData.push(transaction);
-      }
+      this.tableData.push(transaction); // Agrega la nueva transacción a la tabla
       this.showModal = false;
     },
   },

@@ -10,8 +10,7 @@
         </div>
         <p><strong>Dirección:</strong> {{ sucursal.direccion }}</p>
         <p><strong>Teléfono:</strong> {{ sucursal.telefono }}</p>
-        <p><strong>Total de Clientes Atendidos:</strong> {{ sucursal.totalClientes }}</p>
-        <p><strong>Promedio de Clientes por Día:</strong> {{ sucursal.promedioClientes }}</p>
+        <p><strong>Gerente Encargado:</strong> {{ sucursal.gerenteEncargado }}</p>
         <p><strong>Capacidad Máxima:</strong> {{ sucursal.capacidadMaxima }}</p>
         <p><strong>Total de Empleados:</strong> {{ sucursal.totalEmpleados }}</p>
         <p><strong>Horario:</strong> {{ sucursal.horario }}</p>
@@ -24,6 +23,7 @@
       :isVisible="showModal"
       :isEdit="isEdit"
       :sucursalData="currentSucursal"
+      :gerentes="gerentes"
       @close="showModal = false"
       @submit="handleSucursal"
     />
@@ -42,13 +42,21 @@ export default {
       showModal: false,
       isEdit: false,
       currentSucursal: null,
+      gerentes: [
+        { id: 1, nombre: 'Juan Pérez' },
+        { id: 2, nombre: 'Ana Gómez' },
+        { id: 3, nombre: 'Carlos Ruiz' },
+        { id: 4, nombre: 'María López' },
+        { id: 5, nombre: 'Luis Martínez' },
+        { id: 6, nombre: 'Sofía Ramírez' },
+      ],
       sucursales: [
-        { id: 1, nombre: 'Sucursal Centro', direccion: 'Calle Principal #123, Centro', telefono: '555-1234', totalClientes: 1000, promedioClientes: 50, capacidadMaxima: 200, totalEmpleados: 20, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
-        { id: 2, nombre: 'Sucursal Norte', direccion: 'Avenida Norte #456, Zona Norte', telefono: '555-5678', totalClientes: 800, promedioClientes: 40, capacidadMaxima: 150, totalEmpleados: 15, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
-        { id: 3, nombre: 'Sucursal Sur', direccion: 'Calle Sur #789, Zona Sur', telefono: '555-9101', totalClientes: 600, promedioClientes: 30, capacidadMaxima: 100, totalEmpleados: 10, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
-        { id: 4, nombre: 'Sucursal Este', direccion: 'Avenida Este #321, Zona Este', telefono: '555-1122', totalClientes: 700, promedioClientes: 35, capacidadMaxima: 120, totalEmpleados: 12, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
-        { id: 5, nombre: 'Sucursal Oeste', direccion: 'Calle Oeste #654, Zona Oeste', telefono: '555-3344', totalClientes: 900, promedioClientes: 45, capacidadMaxima: 180, totalEmpleados: 18, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
-        { id: 6, nombre: 'Sucursal Industrial', direccion: 'Parque Industrial #777', telefono: '555-7788', totalClientes: 500, promedioClientes: 25, capacidadMaxima: 80, totalEmpleados: 8, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
+        { id: 1, nombre: 'Sucursal Centro', direccion: 'Calle Principal #123, Centro', telefono: '555-1234', gerenteEncargado: 'Juan Pérez', capacidadMaxima: 200, totalEmpleados: 20, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
+        { id: 2, nombre: 'Sucursal Norte', direccion: 'Avenida Norte #456, Zona Norte', telefono: '555-5678', gerenteEncargado: 'Ana Gómez', capacidadMaxima: 150, totalEmpleados: 15, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
+        { id: 3, nombre: 'Sucursal Sur', direccion: 'Calle Sur #789, Zona Sur', telefono: '555-9101', gerenteEncargado: 'Carlos Ruiz', capacidadMaxima: 100, totalEmpleados: 10, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
+        { id: 4, nombre: 'Sucursal Este', direccion: 'Avenida Este #321, Zona Este', telefono: '555-1122', gerenteEncargado: 'María López', capacidadMaxima: 120, totalEmpleados: 12, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
+        { id: 5, nombre: 'Sucursal Oeste', direccion: 'Calle Oeste #654, Zona Oeste', telefono: '555-3344', gerenteEncargado: 'Luis Martínez', capacidadMaxima: 180, totalEmpleados: 18, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
+        { id: 6, nombre: 'Sucursal Industrial', direccion: 'Parque Industrial #777', telefono: '555-7788', gerenteEncargado: 'Sofía Ramírez', capacidadMaxima: 80, totalEmpleados: 8, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
       ],
     };
   },
@@ -59,6 +67,30 @@ export default {
       this.showModal = true;
     },
     handleSucursal(sucursal) {
+      // Convertir valores numéricos y validar que sean correctos
+      const capacidadMaxima = parseInt(sucursal.capacidadMaxima, 10);
+      const totalEmpleados = parseInt(sucursal.totalEmpleados, 10);
+
+      // Validar que todos los campos requeridos estén completos y sean válidos
+      if (
+        !sucursal.nombre?.trim() ||
+        !sucursal.direccion?.trim() ||
+        !sucursal.telefono?.trim() ||
+        !sucursal.gerenteEncargado ||
+        isNaN(capacidadMaxima) || capacidadMaxima <= 0 ||
+        isNaN(totalEmpleados) || totalEmpleados < 0 ||
+        !sucursal.horario?.trim() ||
+        !sucursal.estatus?.trim()
+      ) {
+        alert('Por favor, complete todos los campos requeridos correctamente.');
+        return; // Detener la ejecución si hay campos vacíos o no válidos
+      }
+
+      // Asignar valores corregidos
+      sucursal.capacidadMaxima = capacidadMaxima;
+      sucursal.totalEmpleados = totalEmpleados;
+
+      // Actualizar o agregar la sucursal
       if (this.isEdit) {
         const index = this.sucursales.findIndex(s => s.id === sucursal.id);
         if (index !== -1) {
@@ -68,6 +100,9 @@ export default {
         sucursal.id = this.sucursales.length + 1;
         this.sucursales.push(sucursal);
       }
+
+      // Cerrar el modal después de registrar/actualizar
+      this.showModal = false;
     },
     deleteSucursal(id) {
       this.sucursales = this.sucursales.filter(s => s.id !== id);

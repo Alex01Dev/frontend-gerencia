@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:8000"; // Asegúrate de que la URL coincida con tu servidor FastAPI
+const API_URL = "http://192.168.1.74:8000"; // Asegúrate de que la URL coincida con tu servidor FastAPI
 
 export default {
   // Registro de usuario
@@ -14,6 +14,21 @@ export default {
       return response.data;
     } catch (error) {
       console.error("Error en el registro:", error.response?.data || error);
+      throw error;
+    }
+  },
+
+  // Registro de personas
+  async registerPersonas(personData) {
+    try {
+      console.log(`Persona: ${personData}`); // Comillas invertidas añadidas
+      const response = await axios.post(`${API_URL}/register-personas`, personData, { // Comillas invertidas añadidas
+        headers: { "Content-Type": "application/json" },
+      });
+      console.log(`Persona registrada: ${personData}`); // Comillas invertidas añadidas
+      return response.data;
+    } catch (error) {
+      console.error("Error en el registro de personas:", error.response?.data || error);
       throw error;
     }
   },

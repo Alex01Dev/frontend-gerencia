@@ -1,7 +1,7 @@
 <template>
   <div class="register">
     <div class="register-container">
-      <h2>Registrar Usuario</h2>
+      <h2>Registrar Persona</h2>
       <form @submit.prevent="register" class="form-scroll">
         <!-- Nombre Completo -->
         <div class="form-group">
@@ -19,12 +19,6 @@
         <div class="form-group">
           <label for="segundo_apellido">Segundo Apellido</label>
           <input type="text" id="segundo_apellido" v-model="user.segundo_apellido" required />
-        </div>
-
-        <!-- Nombre de Usuario -->
-        <div class="form-group">
-          <label for="nombre_usuario">Nombre de Usuario</label>
-          <input type="text" id="nombre_usuario" v-model="user.nombre_usuario" required />
         </div>
 
         <!-- Correo Electrónico -->
@@ -99,7 +93,7 @@
 </template>
 
 <script>
-import api from "../api/api.js"
+import api from "../api/api.js";
 
 export default {
   data() {
@@ -108,14 +102,13 @@ export default {
         nombre: "",
         primer_apellido: "",
         segundo_apellido: "",
-        nombre_usuario: "",
         correo_electronico: "",
         contrasena: "",
         numero_telefonico: "",
         tipo_sangre: "",
         genero: "",
         fecha_nacimiento: "",
-        titulo_cortesia: ""
+        titulo_cortesia: "",
       },
       fotografia: null, // Almacena la imagen seleccionada
     };
@@ -127,23 +120,31 @@ export default {
     },
     async register() {
       try {
-        const userWithStatus = { ...this.user, estatus: "Activo" };
-        console.log("Usuario a registrar:", userWithStatus);  // Verifica los datos antes de enviarlos
+        const personData = { ...this.user, estatus: "Activo" };
+        console.log("Persona a registrar:", personData); // Verifica los datos antes de enviarlos
 
         // Si hay una fotografía, la agregamos al objeto que se enviará
         if (this.fotografia) {
-          userWithStatus.fotografia = this.fotografia;
-        }
+          const formData = new FormData();
+          Object.keys(personData).forEach((key) => {
+            formData.append(key, personData[key]);
+          });
+          formData.append("fotografia", this.fotografia);
 
-        const response = await api.registerUser(userWithStatus);
-        alert("Usuario registrado con éxito: " + response.nombre_usuario);
-        this.$router.push("/login");
+          const response = await api.registerPersonas(formData);
+          alert("Persona registrada con éxito: " + response.nombre_usuario);
+          this.$router.push("/login");
+        } else {
+          const response = await api.registerPersonas(personData);
+          alert("Persona registrada con éxito: " + response.nombre_usuario);
+          this.$router.push("/login");
+        }
       } catch (error) {
         console.error("Error en el registro:", error);
         alert("Error en el registro: " + (error.response?.data?.detail || "Desconocido"));
       }
     },
-  }
+ },
 };
 </script>
 

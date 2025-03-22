@@ -1,6 +1,7 @@
 <template>
   <div class="register">
     <div class="register-container">
+      <img src="../assets/logo.png" alt="Gym Bulls Logo" class="logo">
       <h2>Registrar Persona</h2>
       <form @submit.prevent="register" class="form-scroll">
         <!-- Nombre Completo -->
@@ -158,7 +159,7 @@ export default {
   height: 100vh;
   position: relative;
   overflow: hidden;
-  background: url('@/assets/Fondo_login.jpg') no-repeat center center/cover;
+  background: url('../assets/Fondo_login.jpeg') no-repeat center center/cover;
 }
 
 /* Capa de difuminado adicional para mejor visibilidad */
@@ -168,7 +169,7 @@ export default {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5); /* Oscurece un poco */
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(1px);
   box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.3); /* Sombra en los bordes */
 }
 
@@ -181,7 +182,7 @@ export default {
   border-radius: 12px;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
   width: 400px;
-  max-height: 80vh; /* Altura máxima del contenedor */
+  max-height: 90vh; /* Altura máxima del contenedor */
   text-align: center;
   backdrop-filter: blur(12px);
   animation: fadeIn 1s ease-in-out;
@@ -189,11 +190,17 @@ export default {
   overflow: hidden; /* Oculta el desbordamiento */
 }
 
+.logo {
+  width: 95px; /* Ajusta el tamaño si es necesario */
+  height: 95px; /* Ajusta el tamaño si es necesario */
+  animation: fadeIn 1s ease-in-out;
+}
+
 /* Contenedor del formulario con scroll */
 .form-scroll {
   max-height: 60vh; /* Altura máxima del formulario */
   overflow-y: auto; /* Scroll vertical */
-  padding-right: 10px; /* Espacio para el scroll */
+  padding-right: 8px; /* Espacio para el scroll */
 }
 
 /* Animación de entrada */
@@ -210,12 +217,13 @@ export default {
 
 /* Título */
 h2 {
-  margin-bottom: 20px;
+  margin-bottom: 12px;
+  font-size:20px;
 }
 
 /* Inputs */
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 12px;
   text-align: left;
 }
 
@@ -252,18 +260,19 @@ h2 {
 button {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(90deg, #ff000d, #ffd000);
+  background-color: #e60000; /* Rojo sólido */
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 18px;
   transition: 0.3s;
 }
 
 button:hover {
-  background: linear-gradient(90deg, #ffa600, #ff000d);
-  transform: scale(1.05);
+  border-radius: 8px;
+  background-color: #b30000; /* Rojo más oscuro al hacer hover */
+  transform: scale(1.02);
 }
 
 /* Enlace */

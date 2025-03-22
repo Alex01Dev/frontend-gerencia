@@ -2,6 +2,7 @@
   <div class="login">
     <div class="background-overlay"></div>
     <div class="login-container animate-fade-in">
+      <img src="../assets/logo.png" alt="Gym Bulls Logo" class="logo">
       <h1 class="inicio">Iniciar Sesión</h1>
       <h2>¡Bienvenido!</h2>
       <form @submit.prevent="login">
@@ -78,7 +79,7 @@ export default {
   height: 100vh;
   position: relative;
   overflow: hidden;
-  background: url('@/assets/Fondo_login.jpg') no-repeat center center/cover;
+  background: url('../assets/Fondo_login.jpeg') no-repeat center center/cover;
 }
 
 .background-overlay {
@@ -86,13 +87,13 @@ export default {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(1px);
 }
 
 .inicio {
   color: white;
+  font-size: 22px;
 }
-
 .login-container {
   position: relative;
   background-color: rgba(255, 255, 255, 0.1);
@@ -102,23 +103,30 @@ export default {
   width: 400px;
   text-align: center;
   backdrop-filter: blur(12px);
+  max-height: 85vh;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.logo {
+  width: 120px; /* Ajusta el tamaño si es necesario */
+  height: 120px; /* Ajusta el tamaño si es necesario */
   animation: fadeIn 1s ease-in-out;
 }
 
 h2 {
-  margin-bottom: 20px;
+  margin-bottom: 8px;
   color: #ffffff;
-  font-size: 24px;
+  font-size: 18px;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 12px;
   text-align: left;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
   color: #ddd;
 }
 
@@ -141,19 +149,21 @@ h2 {
 button {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(90deg, #ff000d, #ffd000);
+  background-color: #e60000; /* Rojo sólido */
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 18px;
   transition: 0.3s;
 }
 
 button:hover {
-  background: linear-gradient(90deg, #ffa600, #ff000d);
-  transform: scale(1.05);
+  border-radius: 8px;
+  background-color: #b30000; /* Rojo más oscuro al hacer hover */
+  transform: scale(1.02);
 }
+
 
 p {
   margin-top: 15px;

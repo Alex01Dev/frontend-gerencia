@@ -1,6 +1,8 @@
 <template>
   <div class="home">
     <Menu />
+    
+    <!-- Slider en la parte superior -->
     <div class="slider-container">
       <div class="slider">
         <div 
@@ -11,45 +13,25 @@
           <img :src="slide.image" :alt="slide.title" />
         </div>
       </div>
-      <div class="blur-overlay"></div>
       <button class="prev" @click="prevSlide">&#10094;</button>
       <button class="next" @click="nextSlide">&#10095;</button>
     </div>
 
-    <!-- Mission, Vision, Values, Services, and Team cards -->
-    <div class="info-cards">
-      <div class="mission-vision">
-        <div class="card mission">
-          <h3>Misión</h3>
-          <p>Brindar un espacio motivador e inclusivo donde nuestros miembros alcancen sus metas de salud y bienestar, optimizando servicios y recursos para una experiencia excepcional.</p>
-        </div>
-        <div class="card vision">
-          <h3>Visión</h3>
-          <p>Ser un gimnasio líder, reconocido por calidad, innovación y enfoque integral en la salud, promoviendo un estilo de vida activo en nuestra comunidad.</p>
-        </div>
+    <!-- Sección con imagen, degradado y texto alineado a la izquierda -->
+    <div class="info-section">
+      <div class="info-content">
+        <h2>Gestión de Gimnasio Eficiente</h2>
+        <p>Optimiza la administración de tu gimnasio con herramientas avanzadas de seguimiento, control de membresías y reportes en tiempo real.</p>
+        <button class="cta-button">Descubre más</button>
       </div>
-      <div class="values-services">
-        <div class="card values">
-          <h3>Valores</h3>
-          <p>Integridad, compromiso, innovación, y excelencia son los valores que guían nuestras acciones y decisiones.</p>
-        </div>
-        <div class="card services">
-          <h3>Servicios Ofrecidos</h3>
-          <p>Ofrecemos entrenamientos personalizados, clases grupales, asesoramiento nutricional, y más para ayudar a nuestros miembros a alcanzar sus objetivos.</p>
-        </div>
+      <div class="info-image">
+        <img src="../assets/Fondo_login.jpeg" alt="Gimnasio" />
       </div>
-      <div class="about-us">
-        <div class="card">
-          <h3>Sobre Nosotros</h3>
-          <p>En Gym Bulls, la gerencia coordina y optimiza las operaciones para garantizar un servicio de excelencia. Nuestro equipo está comprometido con la mejora continua, creando un ambiente donde entrenadores y miembros alcancen su máximo potencial.</p>
-        </div>
-      </div>
-      <div class="team">
-        <div class="card">
-          <h3>Equipo de Gerencia</h3>
-          <p>Conoce a nuestro equipo de gerencia, compuesto por profesionales dedicados a brindar la mejor experiencia a nuestros miembros.</p>
-        </div>
-      </div>
+    </div>
+
+    <!-- Sección de imágenes complementarias -->
+    <div class="gallery">
+      <img v-for="(image, index) in galleryImages" :key="index" :src="image" class="gallery-image" />
     </div>
   </div>
 </template>
@@ -69,6 +51,11 @@ export default {
         { image: require('@/assets/Imagen2.jpg'), title: 'Slide 2' },
         { image: require('@/assets/Imagen3.jpg'), title: 'Slide 3' },
       ],
+      galleryImages: [
+        'https://images.pexels.com/photos/1.jpg',
+        'https://images.pexels.com/photos/2.jpg',
+        'https://images.pexels.com/photos/3.jpg'
+      ]
     };
   },
   methods: {
@@ -84,138 +71,92 @@ export default {
 
 <style scoped>
 .home {
+  color: white;
+  padding: 20px;
+  overflow-x: hidden;
+  min-height: 100vh; /* Permite el scroll vertical */
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow-x: hidden;
+  align-items: center;
+  padding-top: 200px; 
 }
 
-/* Carrusel */
 .slider-container {
+  width: 50%;
+  overflow: hidden;
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80%; /* Ajustado para darle más espacio */
+  margin: 0 auto;
 }
 
 .slider {
   display: flex;
-  width: 100%;
-  height: 100%;
   transition: transform 0.5s ease-in-out;
-}
-
-.slide {
-  min-width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
 }
 
 .slide img {
   width: 100%;
-  height: 100%;
-  object-fit: cover; /* Ajusta la imagen para que cubra el contenedor */
+  object-fit: cover;
 }
 
 .prev, .next {
-  cursor: pointer;
   position: absolute;
   top: 50%;
-  width: auto;
-  padding: 16px;
-  margin-top: -22px;
+  background: rgba(0, 0, 0, 0.5);
   color: white;
-  font-weight: bold;
-  font-size: 18px;
-  transition: 0.6s ease;
-  border-radius: 0 3px 3px 0;
-  user-select: none;
-  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  padding: 10px;
+  cursor: pointer;
 }
 
-.prev {
-  left: 0;
-}
+.prev { left: 0; }
+.next { right: 0; }
 
-.next {
-  right: 0;
-  border-radius: 3px 0 0 3px;
-}
-
-.prev:hover, .next:hover {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-/* Degradado en la parte inferior */
-.blur-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
+.info-section {
   width: 100%;
-  height: 90%;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(53, 31, 31, 0.76) 100%);
-}
-
-/* Cards de Misión, Visión, Valores, Servicios y Sobre Nosotros */
-.info-cards {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  padding: 2rem;
-  gap: 2rem;
-}
-
-.mission-vision, .values-services {
-  display: flex;
   justify-content: space-between;
-  gap: 2rem;
-  width: 80%;
+  flex-wrap: wrap; /* Permite ajuste en pantallas pequeñas */
+  padding: 20px;
+  text-align: left;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.8), transparent);
 }
 
-.card {
-  background: linear-gradient(to top, rgba(38, 11, 100, 0.6) 0%, rgba(65, 2, 2, 0.473) 100%);
-  border: 2px solid #ccc;
-  padding: 2rem;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0px 6px 18px rgba(255, 255, 255, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  width: 100%;
+.info-content {
+  width: 50%;
 }
 
-.mission, .vision, .values, .services {
-  width: 45%; /* Un poco más anchas para las cards de Misión, Visión, Valores y Servicios */
-}
-
-.card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2);
-}
-
-.card h3 {
-  font-size: 1.6rem;
-  color: #ffffff;
-  margin-bottom: 1rem;
-  font-weight: 600;
-}
-
-.card p {
-  font-size: 1.1rem;
-  color: #ffffff;
-  line-height: 1.6;
-}
-
-.about-us, .team {
+.info-image {
+  width: 50%;
   display: flex;
   justify-content: center;
-  width: 80%;
 }
 
-.about-us .card, .team .card {
-  width: 100%; /* Ocupa el ancho completo */
+.info-image img {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 10px;
+}
+
+.cta-button {
+  background: red;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.gallery {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.gallery-image {
+  width: 30%;
+  height: auto;
+  border-radius: 10px;
 }
 </style>

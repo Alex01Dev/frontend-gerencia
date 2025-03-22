@@ -28,7 +28,7 @@ html, body, #app {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(to right, #0c121d, #180101); /* Un degradado bonito */
+  background: linear-gradient(to bottom, #ffffff, black);
   overflow-x: auto;
 }
 </style>

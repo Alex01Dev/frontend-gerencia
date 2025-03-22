@@ -18,7 +18,15 @@
         <router-link to="/dashboard" class="navbar-link">Dashboard</router-link>
       </li>
       <li class="navbar-item">
-        <button @click="logout" class="navbar-link logout-btn">Cerrar Sesión</button>
+        <div class="profile-dropdown">
+          <button @click="toggleDropdown" class="profile-icon">
+            <img src="@/assets/logo.png" alt="Perfil" class="profile-icon-img" />
+          </button>
+          <div v-if="isDropdownOpen" class="dropdown-menu">
+            <button @click="goToProfile" class="dropdown-item">Ver Perfil</button>
+            <button @click="logout" class="dropdown-item">Cerrar Sesión</button>
+          </div>
+        </div>
       </li>
     </ul>
   </nav>
@@ -27,7 +35,19 @@
 <script>
 export default {
   name: 'MainMenu',
+  data() {
+    return {
+      isDropdownOpen: false,
+    };
+  },
   methods: {
+    toggleDropdown() {
+      this.isDropdownOpen = !this.isDropdownOpen;
+    },
+    goToProfile() {
+      this.$router.push('/perfil');
+      this.isDropdownOpen = false;
+    },
     logout() {
       localStorage.removeItem('authenticated');
       this.$router.push('/login');
@@ -39,7 +59,7 @@ export default {
 <style scoped>
 /* Navbar base */
 .navbar {
-  position: fixed; 
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -50,7 +70,7 @@ export default {
   padding: 0 2rem;
   background: linear-gradient(135deg, #1c1c1c, #0c0000); /* Fondo con gradiente */
   color: white;
-  z-index: 1000; 
+  z-index: 1000;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra suave */
   box-sizing: border-box;
 }
@@ -68,7 +88,7 @@ export default {
 
 .gym-name {
   font-size: 1.5rem;
-  font-weight: 700; 
+  font-weight: 700;
   font-family: 'Poppins', sans-serif;
   color: #ff2222;
   text-transform: uppercase;
@@ -90,7 +110,7 @@ export default {
   display: flex;
   align-items: center;
   list-style: none;
-  gap: 10px; 
+  gap: 10px;
 }
 
 .navbar-link {
@@ -107,18 +127,56 @@ export default {
   transform: scale(1.05);
 }
 
-.logout-btn {
-  background-color: #ff2222;
+/* Estilos para el ícono de perfil y menú desplegable */
+.profile-dropdown {
+  position: relative;
+}
+
+.profile-icon {
+  background: none;
   border: none;
-  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.profile-icon-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.profile-icon-img:hover {
+  transform: scale(1.1);
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 50px;
+  background-color: #1c1c1c;
   border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  z-index: 1001;
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  color: white;
+  text-align: left;
+  background: none;
+  border: none;
   cursor: pointer;
   font-family: 'Montserrat', sans-serif;
   transition: background-color 0.3s ease;
 }
 
-.logout-btn:hover {
-  background-color: #ff0000;
+.dropdown-item:hover {
+  background-color: #ff2222;
+  border-radius: 4px;
 }
 
 @media (max-width: 768px) {

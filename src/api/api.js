@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://192.168.1.71:8000"; // Asegúrate de que la URL coincida con tu servidor FastAPI
+const API_URL = "http://127.0.0.1:8000"; 
 
 export default {
   // Registro de usuario

@@ -4,21 +4,28 @@
     <div class="content">
       <!-- Gráficas -->
       <div class="charts">
-        <div class="chart-container">
-          <Chart :chartData="chartData1" :chartOptions="chartOptions" chartType="line" />
+        <div class="chart-container stacked-column-chart">
+          <StackedColumnChart :data="graficaReportesData" /> <!-- Gráfica de reportes -->
         </div>
         <div class="chart-container">
-          <Chart :chartData="chartData2" :chartOptions="chartOptions" chartType="bar" />
+          <ZoomableTimeseriesChart :data="tableData" /> <!-- Nueva gráfica de transacciones -->
         </div>
       </div>
-
-      <!-- Tabla de datos -->
-      <div class="table-container">
+      <!-- Tabla de transacciones -->
+      <div class="transactions-table-container">
         <div class="table-header">
           <h2>Transacciones</h2>
           <button @click="openModal" class="add-transaction-button">Agregar Transacción</button>
         </div>
         <DataTable :data="tableData" :headers="headers" />
+      </div>
+
+      <!-- Tabla de reportes -->
+      <div class="reports-table-container">
+        <div class="table-header">
+          <h2>Reportes</h2>
+        </div>
+        <ReportesTable :data="reportesData" :headers="reportesHeaders" />
       </div>
     </div>
 
@@ -28,17 +35,22 @@
 </template>
 
 <script>
-import Chart from '@/components/ChartComponent.vue';
+
 import Menu from '@/components/MainMenu.vue';
 import DataTable from '@/components/DataTable.vue';
 import TransactionModal from '@/components/TransactionModal.vue';
+import ReportesTable from '@/components/ReportesTable.vue'; // Importa el nuevo componente
+import StackedColumnChart from '@/components/StackedColumnChart.vue';
+import ZoomableTimeseriesChart from '@/components/ZoomableTimeseriesChart.vue'; // Importa el nuevo componente
 
 export default {
   components: {
-    Chart,
     Menu,
     DataTable,
     TransactionModal,
+    ReportesTable, // Registra el nuevo componente
+    StackedColumnChart,
+    ZoomableTimeseriesChart, // Registra el nuevo componente
   },
   data() {
     return {
@@ -56,6 +68,35 @@ export default {
         { nombreUsuario: 'Pedro Sánchez', rol: 'Usuario', metodoPago: 'Efectivo', monto: '$75', detalles: 'Pago de servicios', estatus: 'Pendiente', fechaRegistro: '2023-10-05', fechaActualizacion: '2023-10-06', tipoTransaccion: 'Egreso' },
       ],
       headers: ['Nombre Usuario', 'Rol', 'Método de Pago', 'Monto', 'Detalles', 'Estatus', 'Fecha de Registro', 'Fecha de Actualización', 'Tipo de Transacción'],
+      reportesData: [
+        { sucursal: 'Sucursal A', mes: 'Enero', ingresos: 10000, egresos: 5000, ganancias: 5000, estatus: 'Activo' },
+        { sucursal: 'Sucursal B', mes: 'Febrero', ingresos: 12000, egresos: 6000, ganancias: 6000, estatus: 'Inactivo' },
+        { sucursal: 'Sucursal C', mes: 'Marzo', ingresos: 15000, egresos: 7000, ganancias: 8000, estatus: 'Activo' },
+        { sucursal: 'Sucursal D', mes: 'Abril', ingresos: 18000, egresos: 8000, ganancias: 10000, estatus: 'Activo' },
+        { sucursal: 'Sucursal E', mes: 'Mayo', ingresos: 20000, egresos: 9000, ganancias: 11000, estatus: 'Inactivo' },
+        { sucursal: 'Sucursal F', mes: 'Junio', ingresos: 20000, egresos: 9000, ganancias: 11000, estatus: 'Inactivo' },
+        { sucursal: 'Sucursal G', mes: 'Julio', ingresos: 20000, egresos: 9000, ganancias: 11000, estatus: 'Inactivo' },
+        { sucursal: 'Sucursal H', mes: 'Agosto', ingresos: 20000, egresos: 9000, ganancias: 11000, estatus: 'Inactivo' },
+        { sucursal: 'Sucursal I', mes: 'Septiembre', ingresos: 20000, egresos: 9000, ganancias: 11000, estatus: 'Inactivo' },
+        { sucursal: 'Sucursal J', mes: 'Octubre', ingresos: 20000, egresos: 9000, ganancias: 11000, estatus: 'Inactivo' },
+        { sucursal: 'Sucursal K', mes: 'Noviembre', ingresos: 20000, egresos: 9000, ganancias: 11000, estatus: 'Inactivo' },
+        { sucursal: 'Sucursal L', mes: 'Diciembre', ingresos: 20000, egresos: 9000, ganancias: 11000, estatus: 'Inactivo' },
+      ],
+      reportesHeaders: ['Sucursal', 'Mes', 'Ingresos', 'Egresos', 'Ganancias', 'Estatus'], // Encabezados para la tabla de reportes
+      graficaReportesData: [
+        { mes: 'Enero', ingresos: 10000, egresos: 5000 },
+        { mes: 'Febrero', ingresos: 12000, egresos: 6000 },
+        { mes: 'Marzo', ingresos: 15000, egresos: 7000 },
+        { mes: 'Abril', ingresos: 18000, egresos: 8000 },
+        { mes: 'Mayo', ingresos: 20000, egresos: 9000 },
+        { mes: 'Junio', ingresos: 20000, egresos: 9000 },
+        { mes: 'Julio', ingresos: 20000, egresos: 9000 },
+        { mes: 'Agosto', ingresos: 20000, egresos: 9000 },
+        { mes: 'Septiembre', ingresos: 20000, egresos:9000},
+        { mes: 'Octubre', ingresos: 20000, egresos: 9000 },
+        { mes: 'Noviembre', ingresos: 20000, egresos: 9000 },
+        { mes: 'Diciembre', ingresos: 20000, egresos: 9000 },
+      ],
       chartData1: {
         labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
         datasets: [
@@ -137,30 +178,57 @@ export default {
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más suave */
   flex: 1;
-  height: 240px; /* Ajusta la altura de cada gráfica */
+  height: 340px; /* Ajusta la altura de cada gráfica */
 }
 
-.table-container {
+
+/* Contenedor de la tabla de transacciones */
+.transactions-table-container {
   background-color: #ffffff; /* Fondo blanco */
   padding: 15px;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más suave */
   overflow-x: auto;
   transition: transform 0.3s ease;
-  flex-grow: 1; /* Permite que el contenedor de la tabla crezca para llenar el espacio disponible */
-  min-height: 610px; /* Altura mínima para el contenedor de la tabla */
+  min-height: 600px; /* Altura mínima para la tabla de transacciones */
 }
 
-.table-container:hover {
+/* Contenedor de la tabla de reportes */
+.reports-table-container {
+  background-color: #ffffff; /* Fondo blanco */
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más suave */
+  overflow-x: auto;
+  transition: transform 0.3s ease;
+  min-height: 480px; /* Altura mínima para la tabla de reportes */
+}
+
+.transactions-table-container:hover,
+.reports-table-container:hover {
   transform: scale(1.01);
 }
 
-.table-container table {
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 0; /* Elimina el margen inferior para alinear mejor con el botón */
+  color: #333333; /* Título en gris oscuro */
+}
+
+table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.table-container th, .table-container td {
+th, td {
   padding: 12px;
   border: 1px solid #ddd;
   text-align: left;
@@ -169,19 +237,8 @@ export default {
   text-overflow: ellipsis; /* Añade puntos suspensivos al texto desbordado */
 }
 
-.table-container th {
+th {
   background-color: #f4f4f4;
   cursor: pointer;
-}
-
-.table-container th span {
-  margin-left: 5px;
-}
-
-h2 {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 15px;
-  color: #333333; /* Título en gris oscuro */
 }
 </style>

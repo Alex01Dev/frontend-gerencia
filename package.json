@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "apexcharts": "^4.5.0",
     "axios": "^1.8.3",
     "chart.js": "^4.4.8",
     "core-js": "^3.8.3",
@@ -21,7 +22,8 @@
     "udn-gerencia": "file:",
     "vue": "^3.2.13",
     "vue-chartjs": "^5.3.2",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.0",
+    "vue3-apexcharts": "^1.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

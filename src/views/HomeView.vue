@@ -4,8 +4,9 @@
 
     <div class="info-section fadeIn">
       <div class="info-content">
-        <h2>Gestión de Gimnasio Eficiente</h2>
-        <p>Accede a reportes detallados, administra tus finanzas y controla múltiples sucursales, todo en un solo lugar.</p>
+        <h2 >Gestión de Gimnasio Eficiente</h2>
+        <p >Accede a reportes detallados, administra tus finanzas y controla múltiples sucursales.</p>
+
       </div>
       <div class="info-image slider-container">
         <div class="slider" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
@@ -19,7 +20,7 @@
     </div>
 
     <div class="options-section fadeIn">
-      <h2 >¿Qué deseas hacer hoy?</h2>
+      <h2>¿Qué deseas hacer hoy?</h2>
       <div class="options-container">
         <router-link to="/dashboard" class="option fadeIn">
           <img src="@/assets/diagrama.png" class="icon" alt="Reportes" />
@@ -31,15 +32,21 @@
         </router-link>
       </div>
     </div>
+    <div class="parallax fadeIn">
+      <h1 class="fadeIn">GYM BULLS</h1>
+    </div>
+    <Footer />
   </div>
 </template>
 
 <script>
 import Menu from '@/components/MainMenu.vue';
+import Footer from '@/components/FooterComponent.vue';
+
 
 export default {
   components: {
-    Menu,
+    Menu,Footer
   },
   data() {
     return {
@@ -52,7 +59,7 @@ export default {
     };
   },
   mounted() {
-    setInterval(this.nextSlide, 3000); 
+    setInterval(this.nextSlide, 3000);
   },
   methods: {
     nextSlide() {
@@ -63,6 +70,7 @@ export default {
     },
   },
 };
+
 </script>
 
 <style scoped>
@@ -71,6 +79,7 @@ export default {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -83,13 +92,12 @@ export default {
 
 .home {
   color: white;
-  padding: 20px;
   overflow-x: hidden;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 180px;
+  margin-top: 940px;
 }
 
 .info-section {
@@ -99,7 +107,6 @@ export default {
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 12px 80px;
-  margin-top: 32px;
   text-align: left;
   background: linear-gradient(to right, rgba(0, 0, 0, 0.8), transparent);
   min-height: 360px;
@@ -155,12 +162,16 @@ button {
 .options-section {
   width: 100%;
   text-align: center;
- 
+  margin-bottom: 64px;
+  margin-top: 20px;
+
 }
 
 .options-section h2 {
   margin-bottom: 32px;
   font-size: 34px;
+  color: white;
+  z-index: 1;
 }
 
 .options-container {
@@ -192,9 +203,46 @@ button {
   height: 50px;
   margin-top: 16px;
 }
-h3{
+
+h3 {
   margin-top: 1px;
+  color: white;
 }
+.parallax {
+  position: relative;
+  width: 100vw;
+  min-height: 440px;
+  background-image: url('@/assets/parallax.jpg');
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 50px;
+  font-weight: bold;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+/* Capa de color rojo tenue */
+.parallax::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 0, 0, 0.055); 
+}
+
+.parallax h1 {
+  position: relative;
+  z-index: 1;
+}
+
+
+
 
 @media (max-width: 768px) {
   .info-section {
@@ -203,13 +251,17 @@ h3{
     padding: 30px;
     min-height: 500px;
   }
+
   .info-content,
   .slider-container {
     width: 100%;
   }
+
   .options-container {
     flex-direction: column;
     align-items: center;
   }
+
+
 }
 </style>

@@ -23,7 +23,7 @@ html, body, #app {
 #app {
   position: relative;
   font-family: Poppins, sans-serif;
-  -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiase d;
   -moz-osx-font-smoothing: grayscale;
   display: flex;
   justify-content: center;

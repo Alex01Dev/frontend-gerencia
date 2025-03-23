@@ -28,7 +28,7 @@ html, body, #app {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #5a5a5a;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.8), #dfdddd);
   overflow-x: auto;
 }
 </style>

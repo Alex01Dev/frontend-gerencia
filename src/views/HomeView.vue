@@ -2,7 +2,7 @@
   <div class="home">
     <Menu />
 
-    <div class="info-section">
+    <div class="info-section fadeIn">
       <div class="info-content">
         <h2>Gestión de Gimnasio Eficiente</h2>
         <p>Accede a reportes detallados, administra tus finanzas y controla múltiples sucursales, todo en un solo lugar.</p>
@@ -15,6 +15,20 @@
         </div>
         <button class="prev" @click="prevSlide">&#10094;</button>
         <button class="next" @click="nextSlide">&#10095;</button>
+      </div>
+    </div>
+
+    <div class="options-section fadeIn">
+      <h2 >¿Qué deseas hacer hoy?</h2>
+      <div class="options-container">
+        <router-link to="/dashboard" class="option fadeIn">
+          <img src="@/assets/diagrama.png" class="icon" alt="Reportes" />
+          <h3>Ver transacciones y reportes</h3>
+        </router-link>
+        <router-link to="/sucursales" class="option fadeIn">
+          <img src="@/assets/edificio.png" class="icon" alt="Sucursales" />
+          <h3>Administrar sucursales</h3>
+        </router-link>
       </div>
     </div>
   </div>
@@ -52,6 +66,21 @@ export default {
 </script>
 
 <style scoped>
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fadeIn {
+  animation: fadeIn 1s ease-in-out;
+}
+
 .home {
   color: white;
   padding: 20px;
@@ -70,6 +99,7 @@ export default {
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 12px 80px;
+  margin-top: 32px;
   text-align: left;
   background: linear-gradient(to right, rgba(0, 0, 0, 0.8), transparent);
   min-height: 360px;
@@ -122,6 +152,50 @@ button {
   right: 10px;
 }
 
+.options-section {
+  width: 100%;
+  text-align: center;
+ 
+}
+
+.options-section h2 {
+  margin-bottom: 32px;
+  font-size: 34px;
+}
+
+.options-container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+}
+
+.option {
+  background: rgba(0, 0, 0, 0.322);
+  backdrop-filter: blur(12px);
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  width: 250px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.644);
+  transition: transform 0.3s;
+}
+
+.option:hover {
+  transform: scale(1.05);
+  border: 0.5px solid white;
+}
+
+.icon {
+  width: 50px;
+  height: 50px;
+  margin-top: 16px;
+}
+h3{
+  margin-top: 1px;
+}
+
 @media (max-width: 768px) {
   .info-section {
     flex-direction: column;
@@ -132,6 +206,10 @@ button {
   .info-content,
   .slider-container {
     width: 100%;
+  }
+  .options-container {
+    flex-direction: column;
+    align-items: center;
   }
 }
 </style>

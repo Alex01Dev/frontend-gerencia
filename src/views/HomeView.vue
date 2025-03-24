@@ -102,7 +102,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 1220px;
+  margin-top: 1140px;
 }
 
 .info-section {

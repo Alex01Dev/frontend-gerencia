@@ -9,24 +9,16 @@
           <h2>{{ sucursal.nombre }}</h2>
         </div>
         <p><strong>Dirección:</strong> {{ sucursal.direccion }}</p>
-        <p><strong>Teléfono:</strong> {{ sucursal.telefono }}</p>
         <p><strong>Gerente Encargado:</strong> {{ sucursal.gerenteEncargado }}</p>
         <p><strong>Capacidad Máxima:</strong> {{ sucursal.capacidadMaxima }}</p>
         <p><strong>Total de Empleados:</strong> {{ sucursal.totalEmpleados }}</p>
         <p><strong>Horario:</strong> {{ sucursal.horario }}</p>
-        <p><strong>Estatus:</strong> {{ sucursal.estatus }}</p>
         <button @click="openModal(true, sucursal)" class="edit-button">Editar</button>
         <button @click="deleteSucursal(sucursal.id)" class="delete-button">Eliminar</button>
       </div>
     </div>
-    <SucursalModal
-      :isVisible="showModal"
-      :isEdit="isEdit"
-      :sucursalData="currentSucursal"
-      :gerentes="gerentes"
-      @close="showModal = false"
-      @submit="handleSucursal"
-    />
+    <SucursalModal :isVisible="showModal" :isEdit="isEdit" :sucursalData="currentSucursal" :gerentes="gerentes"
+      @close="showModal = false" @submit="handleSucursal" />
 
   </div>
 </template>
@@ -36,7 +28,7 @@ import Menu from '@/components/MainMenu.vue';
 import SucursalModal from '@/components/SucursalModal.vue';
 
 export default {
-  components: { Menu, SucursalModal},
+  components: { Menu, SucursalModal },
   name: 'SucursalesView',
   data() {
     return {
@@ -57,7 +49,7 @@ export default {
         { id: 3, nombre: 'Sucursal Sur', direccion: 'Calle Sur #789, Zona Sur', telefono: '555-9101', gerenteEncargado: 'Carlos Ruiz', capacidadMaxima: 100, totalEmpleados: 10, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
         { id: 4, nombre: 'Sucursal Este', direccion: 'Avenida Este #321, Zona Este', telefono: '555-1122', gerenteEncargado: 'María López', capacidadMaxima: 120, totalEmpleados: 12, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
         { id: 5, nombre: 'Sucursal Oeste', direccion: 'Calle Oeste #654, Zona Oeste', telefono: '555-3344', gerenteEncargado: 'Luis Martínez', capacidadMaxima: 180, totalEmpleados: 18, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
-        { id: 6, nombre: 'Sucursal Industrial', direccion: 'Parque Industrial #777', telefono: '555-7788', gerenteEncargado: 'Sofía Ramírez', capacidadMaxima: 80, totalEmpleados: 8, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
+        { id: 6, nombre: 'Sucursal Industrial', direccion: 'Parque Industrial #777', telefono: '555-7788', gerenteEncargado: 'Sofía Ramírez', capacidadMaxima: 80, totalEmpleados: 8, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' }
       ],
     };
   },
@@ -114,25 +106,30 @@ export default {
 
 <style scoped>
 .sucursales-view {
-  margin-top: 677px; /* Ajusta el margen superior según sea necesario */
+  margin-top: 850px;
+  /* Ajusta el margen superior según sea necesario */
   padding: 20px;
+  color: black;
 }
 
 .sucursales-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center; /* Centra las cards horizontalmente */
+  gap: 40px;
+  justify-content: center;
+  /* Centra las cards horizontalmente */
 }
 
 .sucursal-card {
-  background: linear-gradient(135deg, #3b1f24, #222222);
+  background: rgb(221, 219, 219);
+  color: black;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-  color: #fff;
+  box-shadow: 11px 30px 41px 0px rgba(0,0,0,0.75);
+-webkit-box-shadow: 11px 30px 41px 0px rgba(0,0,0,0.75);
+-moz-box-shadow: 11px 30px 41px 0px rgba(0,0,0,0.75);
   flex: 1 1 calc(33.333% - 20px);
-  min-width: 300px;
+  width: 220px;
   transition: transform 0.3s ease-in-out;
 }
 
@@ -142,14 +139,15 @@ export default {
 
 .card-header {
   margin-bottom: 10px;
-  border-bottom: 2px solid #ff5722;
+  border-bottom: 2px solid #ff2222;
   padding-bottom: 5px;
 }
 
 h1 {
-  text-align: center;
-  margin-bottom: 30px;
-  color: #f45c43;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: white;
+  text-align: left;
 }
 
 h2 {
@@ -163,35 +161,50 @@ p {
 }
 
 .add-sucursal-button {
-  background-color: #007bff;
-  color: #fff;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(to right, #420303, #140d0d);
+  color: white;
   border: none;
-  padding: 10px 15px;
-  border-radius: 4px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  border-radius: 30px;
   cursor: pointer;
-  margin-bottom: 20px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+  transition: 0.3s;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  margin-bottom: 32px;
 }
 
 .add-sucursal-button:hover {
-  background-color: #0056b3;
+  transform: translateY(-3px);
 }
 
-.edit-button, .delete-button {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 10px;
+.add-sucursal-button .icon {
+  font-size: 20px;
   margin-right: 10px;
 }
 
-.edit-button:hover, .delete-button:hover {
+.edit-button,
+.delete-button {
+  padding: 12px 24px;
   background-color: #0056b3;
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  border: none; 
+  margin-right: 16px;
+  margin-top: 20px;
+  color: white;
+  
+}
+
+.edit-button:hover,
+.delete-button:hover {
+  background-color: #053f7e;
 }
 
 .delete-button {
@@ -204,7 +217,8 @@ p {
 
 @media (max-width: 768px) {
   .sucursal-card {
-    flex: 1 1 100%; /* Las cards ocupan el 100% del ancho en pantallas pequeñas */
+    flex: 1 1 100%;
+    /* Las cards ocupan el 100% del ancho en pantallas pequeñas */
   }
 }
 </style>

@@ -23,12 +23,17 @@
       <h2>¿Qué deseas hacer hoy?</h2>
       <div class="options-container">
         <router-link to="/dashboard" class="option fadeIn">
-          <img src="@/assets/diagrama.png" class="icon" alt="Reportes" />
-          <h3>Ver transacciones y reportes</h3>
+          <img src="../assets/diagrama.jpg" class="icon" alt="Reportes" />
+          <div class="text-card">
+            <h3>Ver transacciones y reportes</h3>
+
+          </div>
         </router-link>
         <router-link to="/sucursales" class="option fadeIn">
-          <img src="@/assets/edificio.png" class="icon" alt="Sucursales" />
-          <h3>Administrar sucursales</h3>
+          <img src="../assets/edificio.jpg" class="icon" alt="Sucursales" />
+          <div class="text-card">
+            <h3>Administrar sucursales</h3>
+          </div>
         </router-link>
       </div>
     </div>
@@ -40,8 +45,8 @@
 </template>
 
 <script>
-import Menu from '@/components/MainMenu.vue';
-import Footer from '@/components/FooterComponent.vue';
+import Menu from '../components/MainMenu.vue';
+import Footer from '../components/FooterComponent.vue';
 
 
 export default {
@@ -52,9 +57,9 @@ export default {
     return {
       currentIndex: 0,
       slides: [
-        { image: require('@/assets/Imagen1.jpg'), title: 'Slide 1' },
-        { image: require('@/assets/Imagen2.jpg'), title: 'Slide 2' },
-        { image: require('@/assets/Imagen3.jpg'), title: 'Slide 3' },
+        { image: require('../assets/Slider1.jpg'), title: 'Slide 1' },
+        { image: require('../assets/Slider2.jpg'), title: 'Slide 2' },
+        { image: require('../assets/Slider3.jpg'), title: 'Slide 3' },
       ],
     };
   },
@@ -97,7 +102,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 940px;
+  margin-top: 1220px;
 }
 
 .info-section {
@@ -114,6 +119,10 @@ export default {
 
 .info-content {
   width: 30%;
+  margin-left: 32px;
+}
+.info-image{
+  margin-right: 12px;
 }
 
 .slider-container {
@@ -162,51 +171,70 @@ button {
 .options-section {
   width: 100%;
   text-align: center;
-  margin-bottom: 64px;
-  margin-top: 20px;
+  background: rgb(221, 219, 219);
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: black;
+}
 
+.options-container {
+  display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 30px;
+    max-width: 1200px;
+    width: 100%;
 }
 
 .options-section h2 {
   margin-bottom: 32px;
   font-size: 34px;
-  color: white;
-  z-index: 1;
-}
-
-.options-container {
-  display: flex;
-  justify-content: center;
-  gap: 40px;
+  color: black;
+  text-align: center;
 }
 
 .option {
-  background: rgba(0, 0, 0, 0.322);
-  backdrop-filter: blur(12px);
-  color: white;
-  padding: 12px;
-  border-radius: 10px;
+  display: flex;
+  background: #f8f8f8;
+  border-radius: 12px;
+  overflow: hidden;
+  color: black;
   text-decoration: none;
   width: 250px;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.644);
-  transition: transform 0.3s;
+  -webkit-box-shadow: 10px 10px 53px 8px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 10px 10px 53px 8px rgba(0, 0, 0, 0.75);
+  box-shadow: 10px 10px 53px 8px rgba(0, 0, 0, 0.75);
+  height: 200px;
+    /* Altura reducida */
+    width: 50%;
+    margin: 0 auto;
+    transition: transform 0.3s ease-in-out;
 }
 
 .option:hover {
-  transform: scale(1.05);
-  border: 0.5px solid white;
+  transform: scale(1.02);
+  border: 0.5px solid rgb(29, 28, 28);
 }
 
-.icon {
-  width: 50px;
-  height: 50px;
-  margin-top: 16px;
+.option img {
+  width: 50%;
+    object-fit: cover;
+    height: 100%;
 }
 
-h3 {
-  margin-top: 1px;
-  color: white;
+.text-card {
+  padding: 20px;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.text-card h3 {
+  font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
 }
 .parallax {
   position: relative;

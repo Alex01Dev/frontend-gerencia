@@ -48,8 +48,8 @@ const routes = [
     component: RegisterView,
   },
   {
-    path: '/landing',
-    name: 'LandingPage',
+    path: '/Inicio',
+    name: 'Inicio',
     component: LandingPage,
   },
 ];

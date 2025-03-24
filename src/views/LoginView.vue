@@ -94,6 +94,7 @@ export default {
   color: white;
   font-size: 22px;
 }
+
 .login-container {
   position: relative;
   background-color: rgba(255, 255, 255, 0.1);
@@ -107,9 +108,73 @@ export default {
   animation: fadeIn 1s ease-in-out;
 }
 
+/* Estilos para pantallas pequeñas */
+@media (max-width: 768px) {
+  .login-container {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .inicio {
+    font-size: 18px;
+  }
+
+  h2 {
+    font-size: 16px;
+  }
+
+  .form-group input {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  button {
+    padding: 10px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    width: 95%;
+    padding: 15px;
+  }
+
+  .logo {
+    width: 90px;
+    height: 90px;
+  }
+
+  .inicio {
+    font-size: 16px;
+  }
+
+  h2 {
+    font-size: 14px;
+  }
+
+  .form-group label {
+    font-size: 14px;
+  }
+
+  .form-group input {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  button {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  p {
+    font-size: 12px;
+  }
+}
+
 .logo {
-  width: 120px; /* Ajusta el tamaño si es necesario */
-  height: 120px; /* Ajusta el tamaño si es necesario */
+  width: 120px;
+  height: 120px;
   animation: fadeIn 1s ease-in-out;
 }
 
@@ -149,7 +214,7 @@ h2 {
 button {
   width: 100%;
   padding: 12px;
-  background-color: #e60000; /* Rojo sólido */
+  background-color: #e60000;
   color: white;
   border: none;
   border-radius: 8px;
@@ -160,10 +225,9 @@ button {
 
 button:hover {
   border-radius: 8px;
-  background-color: #b30000; /* Rojo más oscuro al hacer hover */
+  background-color: #b30000;
   transform: scale(1.02);
 }
-
 
 p {
   margin-top: 15px;
@@ -182,6 +246,7 @@ router-link:hover {
   text-decoration: underline;
 }
 
+/* Animación para la entrada suave */
 @keyframes fadeIn {
   from {
     opacity: 0;

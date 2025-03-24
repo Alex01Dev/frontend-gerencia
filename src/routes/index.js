@@ -6,6 +6,7 @@ import Reportes from '@/views/ReportesView.vue';
 import LoginView from '@/views/LoginView.vue';
 import RegisterView from '@/views/RegisterView.vue';
 import Perfil from '@/views/PerfilView.vue';
+import LandingPage from '@/views/LandingPageView.vue';
 import GameError from '@/components/GameError.vue';
 
 const routes = [
@@ -52,6 +53,11 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: RegisterView,
+  },
+  {
+    path: '/Inicio',
+    name: 'Inicio',
+    component: LandingPage,
   },
 ];
 

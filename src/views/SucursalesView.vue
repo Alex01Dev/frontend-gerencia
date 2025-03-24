@@ -27,6 +27,7 @@
       @close="showModal = false"
       @submit="handleSucursal"
     />
+
   </div>
 </template>
 
@@ -35,7 +36,7 @@ import Menu from '@/components/MainMenu.vue';
 import SucursalModal from '@/components/SucursalModal.vue';
 
 export default {
-  components: { Menu, SucursalModal },
+  components: { Menu, SucursalModal},
   name: 'SucursalesView',
   data() {
     return {

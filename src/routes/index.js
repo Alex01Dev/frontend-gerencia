@@ -7,10 +7,17 @@ import LoginView from '@/views/LoginView.vue';
 import RegisterView from '@/views/RegisterView.vue';
 import Perfil from '@/views/PerfilView.vue';
 import LandingPage from '@/views/LandingPageView.vue';
+import GameError from '@/components/GameError.vue';
+
 const routes = [
   {
     path: '/',
     redirect: '/login' // 👈 Siempre redirige a /login al iniciar
+  },
+  {
+    path: '/error',
+    name: 'Error',
+    component: GameError,
   },
   {
     path: '/home',

@@ -2,7 +2,7 @@
     <nav class="navbar">
         <div class="navbar-brand">
             <router-link to="/home" class="navbar-link">
-                <img src="../assets/logo.png" alt="GYM Bulls Logo" class="logo" />
+                <img src="../assets/logo3.png" alt="GYM Bulls Logo" class="logo" />
             </router-link>
             <span class="gym-name">GYM BULLS</span>
         </div>

@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 import DashboardView from '@/views/DashboardView.vue';
 import Home from '@/views/HomeView.vue';
 import Sucursales from '@/views/SucursalesView.vue';
-import Reportes from '@/views/ReportesView.vue';
 import LoginView from '@/views/LoginView.vue';
 import RegisterView from '@/views/RegisterView.vue';
 import Perfil from '@/views/PerfilView.vue';
@@ -44,11 +43,6 @@ const routes = [
     path: '/sucursales',
     name: 'Sucursales',
     component: Sucursales,
-  },
-  {
-    path: '/reportes',
-    name: 'Reportes',
-    component: Reportes,
   },
   {
     path: '/login',

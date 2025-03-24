@@ -9,18 +9,15 @@
     <span class="management-title">Gerencia</span>
     <ul class="navbar-menu">
       <li class="navbar-item">
-        <router-link to="/sucursales" class="navbar-link">Sucursales</router-link>
-      </li>
-      <li class="navbar-item">
-        <router-link to="/reportes" class="navbar-link">Reportes</router-link>
-      </li>
-      <li class="navbar-item">
         <router-link to="/dashboard" class="navbar-link">Dashboard</router-link>
+      </li>
+      <li class="navbar-item">
+        <router-link to="/sucursales" class="navbar-link">Sucursales</router-link>
       </li>
       <li class="navbar-item">
         <div class="profile-dropdown">
           <button @click="toggleDropdown" class="profile-icon">
-            <img src="@/assets/logo.png" alt="Perfil" class="profile-icon-img" />
+            <img src="@/assets/perfil-del-usuario.png" alt="Perfil" class="profile-icon-img" />
           </button>
           <div v-if="isDropdownOpen" class="dropdown-menu">
             <button @click="goToProfile" class="dropdown-item">Ver Perfil</button>

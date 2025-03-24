@@ -50,7 +50,7 @@ export default {
     },
     logout() {
       localStorage.removeItem('authenticated');
-      this.$router.push('/login');
+      this.$router.push('/landing');
     },
   },
 };

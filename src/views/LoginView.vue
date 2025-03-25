@@ -9,14 +9,8 @@
 
         <!-- Campo de usuario -->
         <div class="form-group">
-          <label for="username">Usuario</label>
+          <label for="username">Nombre Usuario</label>
           <input type="text" id="username" v-model="username" required />
-        </div>
-        
-        <!-- Campo de correo electrónico -->
-        <div class="form-group">
-          <label for="email">Correo Electrónico</label>
-          <input type="email" id="email" v-model="email" required />
         </div>
 
         <!-- Campo de contraseña -->
@@ -41,7 +35,6 @@ import api from "../api/api.js"; // Asegúrate de importar correctamente api.js
 export default {
   data() {
     return {
-      email: "", // Nuevo campo para el correo electrónico
       username: "",
       password: "",
     };

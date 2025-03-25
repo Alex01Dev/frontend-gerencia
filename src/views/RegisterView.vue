@@ -4,6 +4,34 @@
       <img src="../assets/logo.png" alt="Gym Bulls Logo" class="logo">
       <h2>Registrar Persona</h2>
       <form @submit.prevent="register" class="form-scroll">
+        <!-- Título de Cortesía -->
+        <div class="form-group">
+          <label for="titulo_cortesia">Título de Cortesía</label>
+          <select id="titulo_cortesia" v-model="user.titulo_cortesia" required>
+            <option value="" disabled selected>Seleccione una opción</option>
+            <option value="Sra.">Sra.</option>
+            <option value="Srita.">Srita.</option>
+            <option value="Dra.">Dra.</option>
+            <option value="Mtra.">Mtra.</option>
+            <option value="Lic.">Lic.</option>
+            <option value="Profra.">Profra.</option>
+            <option value="C.">C.</option>
+            <option value="C.P.">C.P.</option>
+            <option value="Med.">Med.</option>
+            <option value="LAE">LAE</option>
+            <option value="Sr.">Sr.</option>
+            <option value="Joven.">Joven.</option>
+            <option value="Dr.">Dr.</option>
+            <option value="Mtr.">Mtr.</option>
+            <option value="Lic.">Lic.</option>
+            <option value="Profr.">Profr.</option>
+            <option value="C.">C.</option>
+            <option value="C.P.">C.P.</option>
+            <option value="Med.">Med.</option>
+            <option value="LAE">LAE</option>
+          </select>
+        </div>
+
         <!-- Nombre Completo -->
         <div class="form-group">
           <label for="nombre">Nombre</label>
@@ -71,12 +99,6 @@
         <div class="form-group">
           <label for="fecha_nacimiento">Fecha de Nacimiento</label>
           <input type="date" id="fecha_nacimiento" v-model="user.fecha_nacimiento" required />
-        </div>
-
-        <!-- Título de Cortesía -->
-        <div class="form-group">
-          <label for="titulo_cortesia">Título de Cortesía</label>
-          <input type="text" id="titulo_cortesia" v-model="user.titulo_cortesia" required />
         </div>
 
         <!-- Fotografía -->

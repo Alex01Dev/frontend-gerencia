@@ -37,10 +37,6 @@
             <label for="detalles">Detalles</label>
             <input type="text" id="detalles" v-model="form.detalles" required />
           </div>
-          <div class="form-group">
-            <label for="estatus">Estatus</label>
-            <input type="text" id="estatus" v-model="form.estatus" readonly />
-          </div>
           <button type="submit">Guardar</button>
         </form>
       </div>

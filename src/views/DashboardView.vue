@@ -48,9 +48,9 @@ export default {
     Menu,
     DataTable,
     TransactionModal,
-    ReportesTable, // Registra el nuevo componente
+    ReportesTable,
     StackedColumnChart,
-    ZoomableTimeseriesChart, // Registra el nuevo componente
+    ZoomableTimeseriesChart,
   },
   data() {
     return {

@@ -11,7 +11,7 @@ import GameError from '@/components/GameError.vue';
 const routes = [
   {
     path: '/',
-    redirect: '/landing' // 👈 Siempre redirige a /landing al iniciar
+    redirect: '/inicio' // 👈 Siempre redirige a /landing al iniciar
   },
   {
     path: '/error',
@@ -19,7 +19,7 @@ const routes = [
     component: GameError,
   },
   {
-    path:'/landing',
+    path:'/inicio',
     name: 'LandingPage',
     component: LandingPage,
   },

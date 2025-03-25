@@ -1,5 +1,9 @@
 <template>
   <div class="register">
+    <ToastMessage 
+      ref="toast" 
+      @close-and-redirect="handleRedirect"
+    />
     <div class="register-container">
       <img src="../assets/logo.png" alt="Gym Bulls Logo" class="logo">
       <h2>Registrar Persona</h2>
@@ -117,8 +121,12 @@
 
 <script>
 import api from "../api/api.js";
+import ToastMessage from "../components/ToastMessage.vue";
 
 export default {
+  components: {
+    ToastMessage
+  },
   data() {
     return {
       user: {
@@ -133,41 +141,56 @@ export default {
         fecha_nacimiento: "",
         titulo_cortesia: "",
       },
-      fotografia: null, // Almacena la imagen seleccionada
+      fotografia: null,
     };
   },
   methods: {
-    // Método para manejar la subida de archivos
     handleFileUpload(event) {
-      this.fotografia = event.target.files[0]; // Almacena el archivo seleccionado
-    },
+    this.fotografia = event.target.files[0];
+  },
+  handleRedirect(path) {
+    this.$router.push(path);
+  },
     async register() {
-      try {
-        const personData = { ...this.user, estatus: "Activo" };
-        console.log("Persona a registrar:", personData); // Verifica los datos antes de enviarlos
+  try {
+    const personData = { ...this.user, estatus: "Activo" };
 
-        // Si hay una fotografía, la agregamos al objeto que se enviará
-        if (this.fotografia) {
-          const formData = new FormData();
-          Object.keys(personData).forEach((key) => {
-            formData.append(key, personData[key]);
-          });
-          formData.append("fotografia", this.fotografia);
+    if (this.fotografia) {
+      const formData = new FormData();
+      Object.keys(personData).forEach((key) => {
+        formData.append(key, personData[key]);
+      });
+      formData.append("fotografia", this.fotografia);
 
-          const response = await api.registerPersonas(formData);
-          alert("Persona registrada con éxito: " + response.nombre_usuario);
-          this.$router.push("/login");
-        } else {
-          const response = await api.registerPersonas(personData);
-          alert("Persona registrada con éxito: " + response.nombre_usuario);
-          this.$router.push("/login");
+      const response = await api.registerPersonas(formData);
+      this.$refs.toast.showToast(
+        `✅ Registro exitoso: ${response.nombre_usuario}`,
+        'success',
+        {
+          redirectOnClose: true,
+          redirectTo: '/login'
         }
-      } catch (error) {
-        console.error("Error en el registro:", error);
-        alert("Error en el registro: " + (error.response?.data?.detail || "Desconocido"));
-      }
-    },
- },
+      );
+    } else {
+      const response = await api.registerPersonas(personData);
+      this.$refs.toast.showToast(
+        `✅ Registro exitoso, tu usuario es: ${response.nombre_usuario}`,
+        'success',
+        {
+          redirectOnClose: true,
+          redirectTo: '/login'
+        }
+      );
+    }
+  } catch (error) {
+    console.error("Error en el registro:", error);
+    this.$refs.toast.showToast(
+      `❌ Error: ${error.response?.data?.detail || "Por favor verifica tus datos"}`,
+      'error'
+    );
+  }
+},
+  },
 };
 </script>
 

@@ -47,7 +47,7 @@ export default {
     },
     logout() {
       localStorage.removeItem('authenticated');
-      this.$router.push('/incio');
+      this.$router.push('/inicio');
     },
   },
 };

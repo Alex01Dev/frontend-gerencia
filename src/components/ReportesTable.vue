@@ -17,8 +17,8 @@
             <td>{{ item.mes }}</td>
             <td>{{ item.ingresos }}</td>
             <td>{{ item.egresos }}</td>
-            <td>{{ item.ganancias }}</td>
-            <td>{{ item.estatus }}</td>
+            <td>{{ item.beneficio_neto }}</td>
+            <td>{{ item.actividad }}</td>
           </tr>
         </tbody>
       </table>

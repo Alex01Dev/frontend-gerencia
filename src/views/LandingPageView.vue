@@ -107,7 +107,7 @@ export default {
     height: 800px;
     background-image: url('@/assets/parallax.jpg');
     background-size: cover;
-    margin-top: 1320px;
+    margin-top: 1260px;
     display: flex;
     justify-content: center;
     align-items: center;

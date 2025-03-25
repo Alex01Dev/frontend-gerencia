@@ -29,19 +29,8 @@
           <input type="number" id="capacidadMaxima" v-model.number="sucursal.capacidadMaxima" required />
         </div>
         <div class="form-group">
-          <label for="totalEmpleados">Total de Empleados:</label>
-          <input type="number" id="totalEmpleados" v-model.number="sucursal.totalEmpleados" required />
-        </div>
-        <div class="form-group">
           <label for="horario">Horario:</label>
           <input type="text" id="horario" v-model="sucursal.horario" required />
-        </div>
-        <div class="form-group">
-          <label for="estatus">Estatus:</label>
-          <select id="estatus" v-model="sucursal.estatus" required>
-            <option value="Activo">Activo</option>
-            <option value="Inactivo">Inactivo</option>
-          </select>
         </div>
         <button type="submit">{{ isEdit ? 'Actualizar' : 'Registrar' }}</button>
       </form>
@@ -65,7 +54,6 @@ export default {
         telefono: '',
         gerenteEncargado: '',
         capacidadMaxima: 0,
-        totalEmpleados: 0,
         horario: '',
         estatus: 'Activo',
       },
@@ -104,7 +92,6 @@ export default {
         !this.sucursal.telefono?.trim() ||
         this.sucursal.gerenteEncargado === '' ||
         this.sucursal.capacidadMaxima <= 0 ||
-        this.sucursal.totalEmpleados < 0 ||
         !this.sucursal.horario?.trim() ||
         !this.sucursal.estatus
       ) {

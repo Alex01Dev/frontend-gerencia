@@ -11,13 +11,12 @@
         <!-- Título de Cortesía -->
         <div class="form-group">
           <label for="titulo_cortesia">Título de Cortesía</label>
-          <select id="titulo_cortesia" v-model="user.titulo_cortesia" required>
+          <select id="titulo_cortesia" v-model="user.titulo_cortesia" >
             <option value="" disabled selected>Seleccione una opción</option>
             <option value="Sra.">Sra.</option>
             <option value="Srita.">Srita.</option>
             <option value="Dra.">Dra.</option>
             <option value="Mtra.">Mtra.</option>
-            <option value="Lic.">Lic.</option>
             <option value="Profra.">Profra.</option>
             <option value="C.">C.</option>
             <option value="C.P.">C.P.</option>
@@ -29,10 +28,6 @@
             <option value="Mtr.">Mtr.</option>
             <option value="Lic.">Lic.</option>
             <option value="Profr.">Profr.</option>
-            <option value="C.">C.</option>
-            <option value="C.P.">C.P.</option>
-            <option value="Med.">Med.</option>
-            <option value="LAE">LAE</option>
           </select>
         </div>
 
@@ -284,8 +279,8 @@ h2 {
   border: none;
   border-radius: 6px;
   font-size: 16px;
-  background: rgba(255, 255, 255, 0.2);
-  color: #000; /* Texto en negro para mejor visibilidad */
+  background: rgba(255, 255, 255, 0.685);
+  color: #000000; /* Texto en negro para mejor visibilidad */
   outline: none;
 }
 

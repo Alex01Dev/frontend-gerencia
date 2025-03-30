@@ -5,19 +5,45 @@
       <!-- Gráficas -->
       <div class="charts">
         <div class="chart-container stacked-column-chart">
-          <StackedColumnChart :data="graficaReportesData" /> <!-- Gráfica de reportes -->
+          <StackedColumnChart :data="graficaReportesData" />
         </div>
         <div class="chart-container">
-          <ZoomableTimeseriesChart :data="tableData" /> <!-- Nueva gráfica de transacciones -->
+          <ZoomableTimeseriesChart :data="tableData" />
         </div>
       </div>
-      <!-- Tabla de transacciones -->
+      
+      <!-- Tabla de transacciones - Versión corregida -->
       <div class="transactions-table-container">
         <div class="table-header">
           <h2>Transacciones</h2>
           <button @click="openModal" class="add-transaction-button">Agregar Transacción</button>
         </div>
-        <DataTable :data="tableData" :headers="headers" />
+        
+        <div class="table-wrapper">
+          <table class="transactions-table">
+            <thead>
+              <tr>
+                <th v-for="header in headers" :key="header">{{ header }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, index) in tableData" :key="index">
+                <td>{{ item['Nombre Usuario'] }}</td>
+                <td>{{ item['Rol'] }}</td>
+                <td>{{ item['Método de Pago'] }}</td>
+                <td>{{ item['Monto'] }}</td>
+                <td>{{ item['Detalles'] }}</td>
+                <td>{{ item['Estatus'] }}</td>
+                <td>{{ item['Fecha de Registro'] }}</td>
+                <td>{{ item['Fecha de Actualización'] }}</td>
+                <td>{{ item['Tipo de Transacción'] }}</td>
+              </tr>
+              <tr v-if="tableData.length === 0">
+                <td :colspan="headers.length" class="no-data">No hay transacciones disponibles</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Tabla de reportes -->
@@ -29,15 +55,13 @@
       </div>
     </div>
 
-    <!-- Modal para agregar transacción -->
     <TransactionModal :isVisible="showModal" @close="showModal = false" @submit="handleTransaction" />
   </div>
 </template>
 
 <script>
-
+import api from '@/api/api.js';
 import Menu from '@/components/MainMenu.vue';
-import DataTable from '@/components/DataTable.vue';
 import TransactionModal from '@/components/TransactionModal.vue';
 import ReportesTable from '@/components/ReportesTable.vue'; // Importa el nuevo componente
 import StackedColumnChart from '@/components/StackedColumnChart.vue';
@@ -46,7 +70,6 @@ import ZoomableTimeseriesChart from '@/components/ZoomableTimeseriesChart.vue'; 
 export default {
   components: {
     Menu,
-    DataTable,
     TransactionModal,
     ReportesTable,
     StackedColumnChart,
@@ -55,18 +78,7 @@ export default {
   data() {
     return {
       showModal: false,
-      tableData: [
-        { nombreUsuario: 'Juan Pérez', rol: 'Administrador', metodoPago: 'Tarjeta de Crédito', monto: '$100', detalles: 'Compra de equipo', estatus: 'Completado', fechaRegistro: '2023-10-01', fechaActualizacion: '2023-10-01', tipoTransaccion: 'Egreso' },
-        { nombreUsuario: 'Alina Bonilla', rol: 'Usuario', metodoPago: 'Transferencia Bancaria', monto: '$150', detalles: 'Pago de servicios', estatus: 'Pendiente', fechaRegistro: '2023-10-01', fechaActualizacion: '2023-10-02', tipoTransaccion: 'Egreso' },
-        { nombreUsuario: 'Ana Gómez', rol: 'Usuario', metodoPago: 'Efectivo', monto: '$200', detalles: 'Compra de suministros', estatus: 'Completado', fechaRegistro: '2023-10-02', fechaActualizacion: '2023-10-03', tipoTransaccion: 'Egreso' },
-        { nombreUsuario: 'Carlos Ruiz', rol: 'Administrador', metodoPago: 'Tarjeta de Débito', monto: '$50', detalles: 'Pago de servicios', estatus: 'Cancelado', fechaRegistro: '2023-10-03', fechaActualizacion: '2023-10-04', tipoTransaccion: 'Egreso' },
-        { nombreUsuario: 'Laura Díaz', rol: 'Usuario', metodoPago: 'Transferencia Bancaria', monto: '$300', detalles: 'Compra de equipo', estatus: 'Completado', fechaRegistro: '2023-10-04', fechaActualizacion: '2023-10-05', tipoTransaccion: 'Egreso' },
-        { nombreUsuario: 'Amauri Garcia', rol: 'Usuario', metodoPago: 'Efectivo', monto: '$75', detalles: 'Pago de servicios', estatus: 'Pendiente', fechaRegistro: '2023-10-05', fechaActualizacion: '2023-10-06', tipoTransaccion: 'Egreso' },
-        { nombreUsuario: 'Maria Cruz', rol: 'Usuario', metodoPago: 'Efectivo', monto: '$75', detalles: 'Pago de servicios', estatus: 'Pendiente', fechaRegistro: '2023-10-05', fechaActualizacion: '2023-10-06', tipoTransaccion: 'Egreso' },
-        { nombreUsuario: 'Juan Carlos', rol: 'Usuario', metodoPago: 'Efectivo', monto: '$75', detalles: 'Pago de servicios', estatus: 'Pendiente', fechaRegistro: '2023-10-05', fechaActualizacion: '2023-10-06', tipoTransaccion: 'Egreso' },
-        { nombreUsuario: 'Alberto Vazquez', rol: 'Usuario', metodoPago: 'Efectivo', monto: '$75', detalles: 'Pago de servicios', estatus: 'Pendiente', fechaRegistro: '2023-10-05', fechaActualizacion: '2023-10-06', tipoTransaccion: 'Egreso' },
-        { nombreUsuario: 'Pedro Sánchez', rol: 'Usuario', metodoPago: 'Efectivo', monto: '$75', detalles: 'Pago de servicios', estatus: 'Pendiente', fechaRegistro: '2023-10-05', fechaActualizacion: '2023-10-06', tipoTransaccion: 'Egreso' },
-      ],
+      tableData: [],
       headers: ['Nombre Usuario', 'Rol', 'Método de Pago', 'Monto', 'Detalles', 'Estatus', 'Fecha de Registro', 'Fecha de Actualización', 'Tipo de Transacción'],
       reportesData: [
         { sucursal: 'Sucursal A', mes: 'Enero', ingresos: 10000, egresos: 5000, beneficio_neto: 5000, actividad: 'Activo' },
@@ -130,12 +142,40 @@ export default {
       this.showModal = true;
     },
     handleTransaction(transaction) {
-      this.tableData.push(transaction); // Agrega la nueva transacción a la tabla
+      this.tableData.push(transaction);
       this.showModal = false;
     },
+    async fetchTransacciones() {
+  try {
+    const transacciones = await api.obtenerTransacciones();
+    console.log('Datos recibidos de la API:', transacciones);
+    
+    this.tableData = transacciones.map(t => ({
+      'Nombre Usuario': t.nombre_usuario,
+      'Rol': t.rol,
+      'Método de Pago': t.metodo_pago,
+      'Monto': `$${t.monto}`,
+      'Detalles': t.detalles,
+      'Estatus': t.estatus,
+      'Fecha de Registro': new Date(t.fecha_registro).toLocaleString(),
+      'Fecha de Actualización': t.fecha_actualizacion 
+        ? new Date(t.fecha_actualizacion).toLocaleString() 
+        : 'N/A',
+      'Tipo de Transacción': t.tipo_transaccion
+    }));
+    
+    console.log('Datos mapeados para tabla:', this.tableData);
+  } catch (error) {
+    console.error("Error al obtener transacciones:", error);
+  }
+},
+  },
+  mounted() {
+    this.fetchTransacciones(); // Llamar a la API al cargar el componente para obtener todas las transacciones
   },
 };
 </script>
+
 
 <style scoped>
 .dashboard {

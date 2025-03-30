@@ -8,22 +8,27 @@
           <div class="form-group">
             <label for="tipoTransaccion">Tipo de Transacción</label>
             <select id="tipoTransaccion" v-model="form.tipoTransaccion" @change="handleTransactionTypeChange" required>
-              <option value="ingreso">Ingreso</option>
-              <option value="egreso">Egreso</option>
+              <option value="Ingreso">Ingreso</option>
+              <option value="Egreso">Egreso</option>
             </select>
           </div>
           <div class="form-group">
             <label for="rol">Rol</label>
-            <select id="rol" v-model="form.rol" required>
-              <option v-if="form.tipoTransaccion === 'ingreso'" value="usuario">Usuario</option>
-              <option v-if="form.tipoTransaccion === 'ingreso'" value="visitante">Visitante</option>
-              <option v-if="form.tipoTransaccion === 'egreso'" value="colaborador">Colaborador</option>
-              <option v-if="form.tipoTransaccion === 'egreso'" value="administrador">Administrador</option>
+            <select id="rol" v-model="form.rol" @change="fetchUsuarios" required>
+              <option v-if="form.tipoTransaccion === 'Ingreso'" value="Cliente">Cliente</option>
+              <option v-if="form.tipoTransaccion === 'Ingreso'" value="Visitante">Visitante</option>
+              <option v-if="form.tipoTransaccion === 'Egreso'" value="Colaborador">Colaborador</option>
+              <option v-if="form.tipoTransaccion === 'Egreso'" value="Administrador">Administrador</option>
             </select>
           </div>
-          <div class="form-group" v-if="form.rol !== 'visitante'">
+          <div class="form-group" v-if="form.rol !== 'Visitante'">
             <label for="nombreUsuario">Nombre Usuario</label>
-            <input type="text" id="nombreUsuario" v-model="form.nombreUsuario" required />
+            <select id="nombreUsuario" v-model="form.nombreUsuario" required>
+              <option value="" disabled>Selecciona un usuario</option> <!-- Opción por defecto -->
+              <option v-for="usuario in usuarios" :key="usuario.id" :value="usuario.id">
+                {{ usuario.nombre_usuario }} <!-- Muestra el nombre_usuario -->
+              </option>
+            </select>
           </div>
           <div class="form-group">
             <label for="metodoPago">Método de Pago</label>
@@ -45,6 +50,8 @@
 </template>
 
 <script>
+import api from "@/api/api.js";
+
 export default {
   props: {
     isVisible: Boolean,
@@ -53,30 +60,66 @@ export default {
     return {
       form: {
         rol: '',
-        nombreUsuario: '',
+        nombreUsuario: '', // Este ahora almacenará el user_id
         metodoPago: '',
         monto: '',
         detalles: '',
-        estatus: 'procesando',
-        tipoTransaccion: 'ingreso',
+        estatus: 'Procesando',
+        tipoTransaccion: 'Ingreso',
       },
+      usuarios: [],
     };
   },
   methods: {
     closeModal() {
       this.$emit('close');
     },
-    submitForm() {
-      this.$emit('submit', this.form);
-      this.closeModal();
+    async fetchUsuarios() {
+      if (this.form.rol && this.form.rol !== 'Visitante') {
+        try {
+          const response = await api.obtenerUsuariosPorTransaccion(this.form.tipoTransaccion, this.form.rol);
+          console.log("Usuarios obtenidos:", response);
+          
+          // Guardamos los objetos completos
+          this.usuarios = response;
+        } catch (error) {
+          console.error("Error al cargar usuarios:", error);
+          this.usuarios = [];
+        }
+      } else {
+        this.usuarios = [];
+      }
+    },
+    async submitForm() {
+      try {
+        const transaccionData = {
+          tipo_transaccion: this.form.tipoTransaccion,
+          usuario_id: this.form.nombreUsuario, // Aquí es el user_id
+          metodo_pago: this.form.metodoPago,
+          monto: parseFloat(this.form.monto),
+          detalles: this.form.detalles,
+          estatus: this.form.estatus,
+        };
+
+        console.log("Datos a enviar:", transaccionData);  
+
+        const response = await api.registrarTransaccion(transaccionData);
+        console.log("Transacción registrada:", response);
+
+        this.$emit("submit", transaccionData);
+        this.closeModal();
+      } catch (error) {
+        console.error("Error al registrar transacción:", error);
+      }
     },
     handleTransactionTypeChange() {
-      // Reset the role when transaction type changes
       this.form.rol = '';
+      this.usuarios = [];
     },
   },
 };
 </script>
+
 
 <style scoped>
 .modal {

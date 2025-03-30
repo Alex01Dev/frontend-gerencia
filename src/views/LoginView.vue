@@ -195,8 +195,8 @@ h2 {
   border: none;
   border-radius: 6px;
   font-size: 16px;
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.685);
+  color: #000000;
   outline: none;
 }
 

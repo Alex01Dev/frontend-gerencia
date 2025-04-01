@@ -4,11 +4,11 @@
     <div class="content">
       <!-- Gráficas -->
       <div class="charts">
-        <div class="chart-container stacked-column-chart">
-          <StackedColumnChart :data="graficaReportesData" />
-        </div>
         <div class="chart-container">
           <ZoomableTimeseriesChart :data="tableData" />
+        </div>
+        <div class="chart-container stacked-column-chart">
+          <StackedColumnChart :data="graficaReportesData" />
         </div>
       </div>
       
@@ -92,7 +92,7 @@ export default {
         { sucursal: 'Sucursal I', mes: 'Septiembre', ingresos: 20000, egresos: 9000, beneficio_neto: 11000, actividad: 'Inactivo' },
         { sucursal: 'Sucursal J', mes: 'Octubre', ingresos: 20000, egresos: 9000, beneficio_neto: 11000, actividad: 'Inactivo' },
         { sucursal: 'Sucursal K', mes: 'Noviembre', ingresos: 20000, egresos: 9000, beneficio_neto: 11000, actividad: 'Inactivo' },
-        { sucursal: 'Sucursal L', mes: 'Diciembre', ingresos: 20000, egresos: 9000,beneficio_neto: 11000,actividad: 'Inactivo' },
+        { sucursal: 'Sucursal L', mes: 'Diciembre', ingresos: 20000, egresos: 9000, beneficio_neto: 11000, actividad: 'Inactivo' },
       ],
       reportesHeaders: ['Sucursal', 'Mes', 'Ingresos', 'Egresos', 'Beneficio Neto', 'Actividad'], // Encabezados para la tabla de reportes
       graficaReportesData: [
@@ -104,37 +104,11 @@ export default {
         { mes: 'Junio', ingresos: 20000, egresos: 9000 },
         { mes: 'Julio', ingresos: 20000, egresos: 9000 },
         { mes: 'Agosto', ingresos: 20000, egresos: 9000 },
-        { mes: 'Septiembre', ingresos: 20000, egresos:9000},
+        { mes: 'Septiembre', ingresos: 20000, egresos: 9000 },
         { mes: 'Octubre', ingresos: 20000, egresos: 9000 },
         { mes: 'Noviembre', ingresos: 20000, egresos: 9000 },
         { mes: 'Diciembre', ingresos: 20000, egresos: 9000 },
       ],
-      chartData1: {
-        labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
-        datasets: [
-          {
-            label: 'Ventas 2023',
-            data: [65, 59, 80, 81, 56],
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1,
-          },
-        ],
-      },
-      chartData2: {
-        labels: ['Rojo', 'Azul', 'Amarillo'],
-        datasets: [
-          {
-            label: 'Colores',
-            data: [55, 55, 55],
-            backgroundColor: ['red', 'blue', 'yellow'],
-          },
-        ],
-      },
-      chartOptions: {
-        responsive: true,
-        maintainAspectRatio: false,
-      },
     };
   },
   methods: {
@@ -146,29 +120,29 @@ export default {
       this.showModal = false;
     },
     async fetchTransacciones() {
-  try {
-    const transacciones = await api.obtenerTransacciones();
-    console.log('Datos recibidos de la API:', transacciones);
-    
-    this.tableData = transacciones.map(t => ({
-      'Nombre Usuario': t.nombre_usuario,
-      'Rol': t.rol,
-      'Método de Pago': t.metodo_pago,
-      'Monto': `$${t.monto}`,
-      'Detalles': t.detalles,
-      'Estatus': t.estatus,
-      'Fecha de Registro': new Date(t.fecha_registro).toLocaleString(),
-      'Fecha de Actualización': t.fecha_actualizacion 
-        ? new Date(t.fecha_actualizacion).toLocaleString() 
-        : 'N/A',
-      'Tipo de Transacción': t.tipo_transaccion
-    }));
-    
-    console.log('Datos mapeados para tabla:', this.tableData);
-  } catch (error) {
-    console.error("Error al obtener transacciones:", error);
-  }
-},
+      try {
+        const transacciones = await api.obtenerTransacciones();
+        console.log('Datos recibidos de la API:', transacciones);
+
+        this.tableData = transacciones.map(t => ({
+          'Nombre Usuario': t.nombre_usuario,
+          'Rol': t.rol,
+          'Método de Pago': t.metodo_pago,
+          'Monto': `$${t.monto}`,
+          'Detalles': t.detalles,
+          'Estatus': t.estatus,
+          'Fecha de Registro': new Date(t.fecha_registro).toLocaleString(),
+          'Fecha de Actualización': t.fecha_actualizacion 
+            ? new Date(t.fecha_actualizacion).toLocaleString() 
+            : 'N/A',
+          'Tipo de Transacción': t.tipo_transaccion
+        }));
+
+        console.log('Datos mapeados para tabla:', this.tableData);
+      } catch (error) {
+        console.error("Error al obtener transacciones:", error);
+      }
+    },
   },
   mounted() {
     this.fetchTransacciones(); // Llamar a la API al cargar el componente para obtener todas las transacciones

@@ -10,13 +10,13 @@
         <!-- Campo de usuario -->
         <div class="form-group">
           <label for="username">Nombre Usuario</label>
-          <input type="text" id="username" v-model="username" required />
+          <input type="text" id="username" v-model="nombre_usuario" required />
         </div>
 
         <!-- Campo de contraseña -->
         <div class="form-group">
           <label for="password">Contraseña</label>
-          <input type="password" id="password" v-model="password" required />
+          <input type="password" id="password" v-model="contrasena" required />
         </div>
 
         <!-- Botón de ingresar -->
@@ -41,24 +41,30 @@ export default {
   },
   methods: {
     async login() {
-      try {
-        // Llamada a la API para autenticar al usuario
-        const response = await api.loginUser(this.username, this.password);
+  try {
+    // Llamada a la API para autenticar al usuario
+    const response = await api.loginUser(this.nombre_usuario, this.contrasena);
 
-        if (response && response.access_token) {
-          // Si la respuesta contiene un token, guardarlo en el almacenamiento local
-          localStorage.setItem("authenticated", true);
-          localStorage.setItem("token", response.access_token); // Guardar el token
+    if (response && response.access_token) {
+      // Si la respuesta contiene un token, guardarlo en el almacenamiento local
+      localStorage.setItem("authenticated", true);
+      localStorage.setItem("token", response.access_token);
+      localStorage.setItem("esGerente", response.esGerente); // Guardar también el rol
 
-          // Redirigir al usuario al home o página deseada
-          this.$router.push("/home");
-        } else {
-          alert("Usuario o contraseña incorrectos");
-        }
-      } catch (error) {
-        alert("Hubo un error al intentar iniciar sesión. Intenta nuevamente.");
+      // Redirigir según el rol
+      if (response.esGerente) {
+        this.$router.push("/home");
+      } else {
+        this.$router.push("/error");
       }
-    },
+    } else {
+      alert("Usuario o contraseña incorrectos");
+    }
+  } catch (error) {
+    console.error("Error en login:", error);
+    alert("Hubo un error al intentar iniciar sesión. Intenta nuevamente.");
+  }
+},
   },
 };
 </script>

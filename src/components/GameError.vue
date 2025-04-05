@@ -179,10 +179,10 @@ export default {
     backgroundMusic.volume = 0.5;
     backgroundMusic.play();
 
-    backHomeBtn.addEventListener("click", function() {
-      backgroundMusic.pause();
-      this.$router.push({ name: 'Home' }); // Redirigir a la página de inicio
-    });
+    backHomeBtn.addEventListener("click", () => {
+  backgroundMusic.pause();
+  this.$router.push('/inicio'); // ✅ Redirige correctamente
+});
 
     restartBtn.addEventListener("click", restartGame);
   },

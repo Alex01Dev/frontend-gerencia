@@ -65,6 +65,18 @@
             required 
           />
         </div>
+
+                <!-- Campo de detalles -->
+        <div class="form-group">
+          <label for="detalles">Detalles:</label>
+          <textarea 
+            id="detalles" 
+            v-model="sucursal.detalles" 
+            placeholder="Ingrese detalles adicionales sobre la sucursal"
+            rows="3"
+            required
+          ></textarea>
+        </div>
         
         <div class="form-group" v-if="isEdit">
           <label>Estatus:</label>
@@ -114,7 +126,7 @@ export default {
         capacidad_maxima: 0,
         horario_disponibilidad: '',
         detalles: '',
-        estatus: 'Activa',
+        estatus: 'Activa', // Enviar como string
       },
       gerentes: [],
     };
@@ -137,11 +149,10 @@ export default {
       try {
         this.gerentes = await api.obtenerGerentesActivos();
       } catch (error) {
-        console.error("Error al cargar gerentes:", error);
+        console.error('Error al cargar gerentes:', error);
         this.$emit('error', 'No se pudieron cargar los gerentes');
       }
     },
-    
     cargarDatosEdicion() {
       this.sucursal = {
         nombre: this.sucursalData.nombre,
@@ -154,33 +165,28 @@ export default {
         estatus: this.sucursalData.estatus,
       };
     },
-    
     closeModal() {
       this.$emit('close');
     },
-    
     async submitForm() {
       // Validación de campos
       if (!this.validarFormulario()) {
         return;
       }
-      
+
       try {
         const datosParaEnviar = {
           nombre: this.sucursal.nombre.trim(),
           direccion: this.sucursal.direccion.trim(),
-          responsable_id: this.sucursal.responsable_id,
-          capacidad_maxima: this.sucursal.capacidad_maxima,
+          responsable_id: parseInt(this.sucursal.responsable_id, 10), // Asegurarse de que sea un número entero
+          capacidad_maxima: parseInt(this.sucursal.capacidad_maxima, 10), // Asegurarse de que sea un número entero
           horario_disponibilidad: this.sucursal.horario_disponibilidad.trim(),
           detalles: this.sucursal.detalles.trim(),
-          estatus: this.sucursal.estatus === 'Activa',
+          estatus: this.sucursal.estatus, // Enviar como string ("Activa" o "Inactiva")
         };
-        
-        // Agregar teléfono si existe
-        if (this.sucursal.telefono) {
-          datosParaEnviar.telefono = this.sucursal.telefono.trim();
-        }
-        
+
+        console.log('Datos enviados al backend:', datosParaEnviar);
+
         if (this.isEdit) {
           await api.actualizarSucursal(this.sucursalData.id, datosParaEnviar);
           this.$emit('success', 'Sucursal actualizada correctamente');
@@ -188,46 +194,48 @@ export default {
           await api.registrarSucursal(datosParaEnviar);
           this.$emit('success', 'Sucursal registrada correctamente');
         }
-        
+
         this.closeModal();
         this.$emit('refresh');
       } catch (error) {
-        console.error("Error al guardar sucursal:", error);
+        console.error('Error al guardar sucursal:', error);
         this.$emit('error', error.response?.data?.detail || 'Error al guardar la sucursal');
       }
     },
-    
     validarFormulario() {
       const errores = [];
-      
+
       if (!this.sucursal.nombre?.trim()) {
         errores.push('El nombre es requerido');
       }
-      
+
       if (!this.sucursal.direccion?.trim()) {
         errores.push('La dirección es requerida');
       }
-      
+
       if (!this.sucursal.responsable_id) {
         errores.push('Debe seleccionar un gerente responsable');
       }
-      
+
       if (!this.sucursal.capacidad_maxima || this.sucursal.capacidad_maxima <= 0) {
         errores.push('La capacidad máxima debe ser mayor a 0');
       }
-      
+
       if (!this.sucursal.horario_disponibilidad?.trim()) {
         errores.push('El horario es requerido');
       }
-      
+
+      if (!this.sucursal.detalles?.trim()) {
+        errores.push('Los detalles son requeridos');
+      }
+
       if (errores.length > 0) {
         this.$emit('error', errores.join(', '));
         return false;
       }
-      
+
       return true;
     },
-    
     resetForm() {
       this.sucursal = {
         nombre: '',
@@ -237,7 +245,7 @@ export default {
         capacidad_maxima: 0,
         horario_disponibilidad: '',
         detalles: '',
-        estatus: 'Activa',
+        estatus: 'Activa', // Enviar como string
       };
     },
   },
@@ -268,6 +276,16 @@ export default {
   max-height: 80%;
   overflow-y: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos adicionales para el campo de detalles */
+textarea {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: vertical; /* Permitir redimensionar verticalmente */
 }
 
 .close {

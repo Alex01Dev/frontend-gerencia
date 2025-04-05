@@ -34,13 +34,15 @@ export default {
   },
 
   // Login de usuario
-  async loginUser(username, password) {
+  async loginUser(nombre_usuario, contrasena) {
     try {
-      const response = await axios.post(`${API_URL}/login`, { username, password }, {
+      const response = await axios.post(`${API_URL}/login`, { nombre_usuario, contrasena }, {
         headers: { "Content-Type": "application/json" },
       });
       return response.data; // Devuelve el token y tipo de token
     } catch (error) {
+      console.log(console.error);
+      
       console.error("Error en el login:", error.response?.data || error);
       throw error;
     }

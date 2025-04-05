@@ -22,13 +22,27 @@
             </select>
           </div>
           <div class="form-group" v-if="form.rol !== 'Visitante'">
-            <label for="nombreUsuario">Nombre Usuario</label>
-            <select id="nombreUsuario" v-model="form.nombreUsuario" required>
-              <option value="" disabled>Selecciona un usuario</option> <!-- Opción por defecto -->
-              <option v-for="usuario in usuarios" :key="usuario.id" :value="usuario.id">
-                {{ usuario.nombre_usuario }} <!-- Muestra el nombre_usuario -->
-              </option>
-            </select>
+            <label for="nombreUsuario">Buscar Usuario</label>
+            <input
+              type="text"
+              id="nombreUsuario"
+              v-model="searchQuery"
+              @input="filterUsuarios"
+              placeholder="Escribe para buscar un usuario"
+              autocomplete="off"
+              required
+            />
+            <!-- Mostrar la lista solo si hay texto en el buscador -->
+            <ul v-if="searchQuery && filteredUsuarios.length > 0" class="autocomplete-list">
+              <li
+                v-for="usuario in filteredUsuarios"
+                :key="usuario.id"
+                @click="selectUsuario(usuario)"
+                class="autocomplete-item"
+              >
+                {{ usuario.nombre_usuario }}
+              </li>
+            </ul>
           </div>
           <div class="form-group">
             <label for="metodoPago">Método de Pago</label>
@@ -59,27 +73,29 @@ export default {
   data() {
     return {
       form: {
-        rol: '',
-        nombreUsuario: '', // Este ahora almacenará el user_id
-        metodoPago: '',
-        monto: '',
-        detalles: '',
-        estatus: 'Procesando',
-        tipoTransaccion: 'Ingreso',
+        rol: "",
+        nombreUsuario: "", // Este ahora almacenará el user_id
+        metodoPago: "",
+        monto: "",
+        detalles: "",
+        estatus: "Procesando",
+        tipoTransaccion: "Ingreso",
       },
-      usuarios: [],
+      usuarios: [], // Lista completa de usuarios obtenidos de la API
+      filteredUsuarios: [], // Lista filtrada para el buscador
+      searchQuery: "", // Texto ingresado en el buscador
     };
   },
   methods: {
     closeModal() {
-      this.$emit('close');
+      this.$emit("close");
     },
     async fetchUsuarios() {
-      if (this.form.rol && this.form.rol !== 'Visitante') {
+      if (this.form.rol && this.form.rol !== "Visitante") {
         try {
           const response = await api.obtenerUsuariosPorTransaccion(this.form.tipoTransaccion, this.form.rol);
           console.log("Usuarios obtenidos:", response);
-          
+
           // Guardamos los objetos completos
           this.usuarios = response;
         } catch (error) {
@@ -89,6 +105,19 @@ export default {
       } else {
         this.usuarios = [];
       }
+    },
+    filterUsuarios() {
+      // Filtra los usuarios según el texto ingresado en el buscador
+      const query = this.searchQuery.toLowerCase();
+      this.filteredUsuarios = this.usuarios.filter((usuario) =>
+        usuario.nombre_usuario.toLowerCase().includes(query)
+      );
+    },
+    selectUsuario(usuario) {
+      // Selecciona un usuario de la lista y actualiza el formulario
+      this.form.nombreUsuario = usuario.id; // Guarda el ID del usuario
+      this.searchQuery = usuario.nombre_usuario; // Muestra el nombre en el campo de búsqueda
+      this.filteredUsuarios = []; // Limpia la lista de sugerencias
     },
     async submitForm() {
       try {
@@ -101,7 +130,7 @@ export default {
           estatus: this.form.estatus,
         };
 
-        console.log("Datos a enviar:", transaccionData);  
+        console.log("Datos a enviar:", transaccionData);
 
         const response = await api.registrarTransaccion(transaccionData);
         console.log("Transacción registrada:", response);
@@ -113,13 +142,14 @@ export default {
       }
     },
     handleTransactionTypeChange() {
-      this.form.rol = '';
+      this.form.rol = "";
       this.usuarios = [];
+      this.filteredUsuarios = [];
+      this.searchQuery = "";
     },
   },
 };
 </script>
-
 
 <style scoped>
 .modal {
@@ -141,8 +171,8 @@ export default {
   border-radius: 8px;
   width: 400px;
   max-width: 90%;
-  max-height: 90%; /* Limita la altura máxima del contenido del modal */
-  overflow-y: auto; /* Habilita el desplazamiento vertical */
+  max-height: 90%;
+  overflow-y: auto;
 }
 
 .close {
@@ -154,12 +184,13 @@ export default {
 }
 
 .form-container {
-  max-height: 70vh; /* Limita la altura máxima del contenedor del formulario */
-  overflow-y: auto; /* Habilita el desplazamiento vertical */
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
 .form-group {
   margin-bottom: 15px;
+  position: relative; /* Añadido para posicionar correctamente la lista de autocompletado */
 }
 
 .form-group label {
@@ -172,6 +203,8 @@ export default {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
+  border: 1px solid #ddd; /* Añadido para mejor visibilidad */
+  border-radius: 4px; /* Añadido para consistencia */
 }
 
 button {
@@ -181,9 +214,60 @@ button {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  width: 100%; /* Hacer que el botón ocupe todo el ancho */
+  margin-top: 10px;
 }
 
 button:hover {
   background-color: #0056b3;
+}
+
+.autocomplete-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ddd;
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: #fff;
+  position: absolute;
+  width: calc(100% - 2px); /* Ajuste para considerar el borde */
+  z-index: 1000;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  top: 100%; /* Posiciona la lista justo debajo del input */
+  left: 0;
+}
+
+.autocomplete-item {
+  padding: 8px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-item:hover {
+  background-color: #f4f4f4;
+}
+
+/* Estilos adicionales para mejor visualización */
+#nombreUsuario {
+  width: calc(100% - 18px); /* Ajuste para padding y bordes */
+}
+
+/* Media query para pantallas pequeñas */
+@media (max-width: 480px) {
+  .modal-content {
+    width: 95%;
+    padding: 15px;
+  }
+  
+  .form-group input,
+  .form-group select {
+    padding: 10px;
+  }
 }
 </style>

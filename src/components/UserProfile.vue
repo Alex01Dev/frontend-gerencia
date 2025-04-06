@@ -14,7 +14,19 @@
         <div class="profile-info">
           <div class="info-item">
             <span class="info-icon">👤</span>
-            <span class="info-text"><strong>Nombre:</strong> {{ nombreCompleto }}</span>
+            <span class="info-text"><strong>Nombre de usuario:</strong> {{ nombreUsuario }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">🧬</span>
+            <span class="info-text"><strong>Nombre:</strong> {{ nombre }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">🧬</span>
+            <span class="info-text"><strong>Apellido Paterno:</strong> {{ primerApellido }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">🧬</span>
+            <span class="info-text"><strong>Apellido Materno:</strong> {{ segundoApellido }}</span>
           </div>
           <div class="info-item">
             <span class="info-icon">📅</span>
@@ -30,7 +42,7 @@
           </div>
           <div class="info-item">
             <span class="info-icon">📞</span>
-            <span class="info-text"><strong>Teléfono:</strong> {{ telefono }}</span>
+            <span class="info-text"><strong>Teléfono:</strong> {{ numeroTelefonico }}</span>
           </div>
           <div class="info-item">
             <span class="info-icon">🔑</span>
@@ -48,12 +60,24 @@
         <h2>Editar Perfil</h2>
         <!-- Formulario de edición -->
         <div class="form-group">
-          <label for="telefono">Teléfono:</label>
-          <input type="text" id="telefono" v-model="telefonoEditado" />
+          <label for="nombre">Nombre: <span class="required">*</span></label>
+          <input type="text" id="nombre" v-model="nombreEditado" required />
+          <span v-if="!nombreEditado" class="error-message">campo requerido</span>
         </div>
         <div class="form-group">
-          <label for="direccion">Dirección:</label>
-          <input type="text" id="direccion" v-model="direccionEditada" />
+          <label for="primer_apellido">Apellido Paterno: <span class="required">*</span></label>
+          <input type="text" id="primer_apellido" v-model="primerApellidoEditado" required />
+          <span v-if="!primerApellidoEditado" class="error-message">campo requerido</span>
+        </div>
+        <div class="form-group">
+          <label for="segundo_apellido">Apellido Materno: <span class="required">*</span></label>
+          <input type="text" id="segundo_apellido" v-model="segundoApellidoEditado" required />
+          <span v-if="!segundoApellidoEditado" class="error-message">campo requerido</span>
+        </div>
+        <div class="form-group">
+          <label for="telefono">Teléfono: <span class="required">*</span></label>
+          <input type="text" id="telefono" v-model="numeroTelefonicoEditado" required />
+          <span v-if="!numeroTelefonicoEditado" class="error-message">campo requerido</span>
         </div>
         <div class="form-group">
           <label for="foto">Cambiar Foto:</label>
@@ -61,7 +85,7 @@
         </div>
         <!-- Botones del modal -->
         <div class="modal-buttons">
-          <button class="save-button" @click="guardarCambios">Guardar Cambios</button>
+          <button class="save-button" :disabled="formInvalido" @click="guardarCambios">Guardar Cambios</button>
           <button class="cancel-button" @click="cerrarModal">Cancelar</button>
         </div>
       </div>
@@ -76,17 +100,28 @@ export default {
   name: 'UserProfile',
   data() {
     return {
-      nombreCompleto: '',
-    fechaRegistro: '',
-    fechaNacimiento: '',
-    correo: '',
-    telefono: '',
-    rol: '',
+      nombreUsuario: '',
+      nombre: '',
+      primerApellido: '',
+      segundoApellido: '',
+      fechaRegistro: '',
+      fechaNacimiento: '',
+      correo: '',
+      numeroTelefonico: '',
+      rol: '',
       fotoPerfil: require('@/assets/Perfil.jpg'), // Imagen por defecto
       mostrarModal: false,
-      telefonoEditado: '',
-      direccionEditada: '',
+      primerApellidoEditado: '',
+      segundoApellidoEditado: '',
+      numeroTelefonicoEditado: '',
+      telefonoInvalido: false,  // Bandera para validar el teléfono
     };
+  },
+  computed: {
+    formInvalido() {
+      return !this.nombreEditado || !this.primerApellidoEditado || !this.segundoApellidoEditado ||
+        !this.numeroTelefonicoEditado || this.telefonoInvalido;
+    }
   },
   mounted() {
     this.obtenerUsuario();
@@ -94,34 +129,69 @@ export default {
   methods: {
     async obtenerUsuario() {
       try {
-    const datos = await api.obtenerUsuarioConPersona(); // Asegúrate de pasar el nombre de usuario si es necesario
-    console.log("Datos del usuario y persona:", datos);
+        const datos = await api.obtenerUsuarioConPersona(); // Asegúrate de pasar el nombre de usuario si es necesario
+        console.log("Datos del usuario y persona:", datos);
 
-    const { usuario, persona } = datos;
-
-    this.nombreCompleto = `${persona.nombre} ${persona.apellido} ${persona.segundo_apellido}`;
-    this.fechaRegistro = usuario.fecha_registro;
-    this.fechaNacimiento = persona.fecha_nacimiento;
-    this.correo = usuario.correo;
-    this.telefono = persona.telefono;
-    this.rol = usuario.Rol;
-
-  } catch (err) {
-    console.error("Error al cargar datos del usuario:", err);
-  }
+        const { usuario, persona } = datos;
+        this.id = usuario.id; // Asignar el ID del usuario
+        this.idPersona = persona.id; // Asignar el ID de la persona
+        this.nombreUsuario = usuario.nombre_usuario; // Asignar el nombre de usuario
+        this.nombre = persona.nombre;
+        this.primerApellido = persona.primer_apellido; // Asignar el primer apellido
+        this.segundoApellido = persona.segundo_apellido; // Asignar el segundo apellido
+        this.fechaRegistro = usuario.fecha_registro;
+        this.fechaNacimiento = persona.fecha_nacimiento;
+        this.correo = usuario.correo;
+        this.numeroTelefonico = persona.numero_telefonico;
+        this.rol = usuario.Rol;
+      } catch (err) {
+        console.error("Error al cargar datos del usuario:", err);
+      }
     },
     abrirModal() {
-      this.telefonoEditado = this.telefono;
-      this.direccionEditada = this.direccion;
+      this.nombreEditado = this.nombre;
+      this.primerApellidoEditado = this.primerApellido;
+      this.segundoApellidoEditado = this.segundoApellido;
+      this.numeroTelefonicoEditado = this.numeroTelefonico;
+      this.telefonoInvalido = false;
       this.mostrarModal = true;
     },
     cerrarModal() {
       this.mostrarModal = false;
     },
-    guardarCambios() {
-      this.telefono = this.telefonoEditado;
-      this.direccion = this.direccionEditada;
-      this.cerrarModal();
+    validarTelefono() {
+      // Validar que el teléfono tenga exactamente 10 dígitos
+      this.telefonoInvalido = this.numeroTelefonicoEditado.length !== 10;
+    },
+    async guardarCambios() {
+      // Llamamos a la validación antes de guardar
+      this.validarTelefono();
+
+      if (this.telefonoInvalido) {
+        return; // No guarda si el teléfono no es válido
+      }
+
+      try {
+        // Llamar a la función actualizarPersona con el ID y los nuevos datos
+        const personaData = {
+          nombre: this.nombreEditado,
+          primer_apellido: this.primerApellidoEditado,
+          segundo_apellido: this.segundoApellidoEditado,
+          numero_telefonico: this.numeroTelefonicoEditado,
+        };
+
+        const respuesta = await api.actualizarPersona(this.idPersona, personaData);
+        console.log('Respuesta de la actualización:', respuesta);
+
+        // Si la respuesta es exitosa, actualizar los datos del usuario
+        this.nombre = this.nombreEditado;
+        this.primerApellido = this.primerApellidoEditado;
+        this.segundoApellido = this.segundoApellidoEditado;
+        this.numeroTelefonico = this.numeroTelefonicoEditado;
+        this.cerrarModal();
+      } catch (error) {
+        console.error("Error al guardar cambios:", error);
+      }
     },
     cambiarFoto(event) {
       const file = event.target.files[0];
@@ -136,6 +206,8 @@ export default {
   },
 };
 </script>
+
+
 <style scoped>
 /* Tarjeta de perfil */
 .profile-card {
@@ -143,17 +215,20 @@ export default {
   border-radius: 15px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  max-width: 800px; /* Aumentamos el ancho máximo */
+  max-width: 800px;
+  /* Aumentamos el ancho máximo */
   width: 100%;
   animation: fadeIn 0.5s ease-in-out;
-  margin: 20px auto; /* Ajustamos el margen superior */
-  margin-top: -165px; /* Ajustamos el margen superior */
+  margin: 20px auto;
+  /* Ajustamos el margen superior */
+  margin-top: -165px;
+  /* Ajustamos el margen superior */
   padding: 0px;
 }
 
 /* Encabezado de la tarjeta */
 .profile-header {
-  background: linear-gradient(135deg, #007bff, #0056b3);
+  background: linear-gradient(135deg, #83190b, #4b0202);
   color: white;
   padding: 20px;
   text-align: center;
@@ -180,7 +255,8 @@ export default {
   flex-direction: row;
   align-items: flex-start;
   width: 100%;
-  gap: 20px; /* Espacio entre la foto y la información */
+  gap: 20px;
+  /* Espacio entre la foto y la información */
 }
 
 /* Avatar */
@@ -193,7 +269,7 @@ export default {
   width: 100%;
   height: auto;
   border-radius: 50%;
-  border: 4px solid #007bff;
+  border: 4px solid #4b0202;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
@@ -222,7 +298,7 @@ export default {
 
 /* Botón de editar */
 .edit-button {
-  background: #007bff;
+  background: #4b0202;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -233,7 +309,7 @@ export default {
 }
 
 .edit-button:hover {
-  background: #0056b3;
+  background: #83190b;
 }
 
 /* Modal de edición */
@@ -320,12 +396,27 @@ export default {
   background: #c82333;
 }
 
+.required {
+  color: red;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+
 /* Animación de entrada */
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

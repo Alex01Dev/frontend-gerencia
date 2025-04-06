@@ -174,6 +174,23 @@ export default {
         console.error("Error al obtener usuario con datos de persona:", error.response?.data || error);
         throw error;
       }
+    },
+    
+    async actualizarPersona(personaId, personaData) {
+      try {
+        const token = localStorage.getItem("token"); // Asumiendo que usas JWT
+        const response = await axios.put(`${API_URL}/personas/${personaId}`, personaData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Si tu endpoint requiere autenticación
+          },
+        });
+        console.log("Persona actualizada:", response.data);
+        return response.data;
+      } catch (error) {
+        console.error("Error al actualizar persona:", error.response?.data || error);
+        throw error;
+      }
     }
   
 };

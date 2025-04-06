@@ -14,7 +14,7 @@
         <div class="profile-info">
           <div class="info-item">
             <span class="info-icon">👤</span>
-            <span class="info-text"><strong>Nombre:</strong> {{ nombre }}</span>
+            <span class="info-text"><strong>Nombre:</strong> {{ nombreCompleto }}</span>
           </div>
           <div class="info-item">
             <span class="info-icon">📅</span>
@@ -31,10 +31,6 @@
           <div class="info-item">
             <span class="info-icon">📞</span>
             <span class="info-text"><strong>Teléfono:</strong> {{ telefono }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-icon">🏠</span>
-            <span class="info-text"><strong>Dirección:</strong> {{ direccion }}</span>
           </div>
           <div class="info-item">
             <span class="info-icon">🔑</span>
@@ -74,26 +70,46 @@
 </template>
 
 <script>
+import api from "../api/api.js";  // Asegúrate de importar el archivo de servicios correctamente
+
 export default {
   name: 'UserProfile',
   data() {
     return {
-      nombre: 'Juan',
-      primerApellido: 'Pérez',
-      segundoApellido: 'Gómez',
-      fechaRegistro: '2023-10-01',
-      fechaNacimiento: '1990-05-15',
-      correo: 'juan.perez@example.com',
-      telefono: '555-1234-5678',
-      direccion: 'Calle Falsa 123, Ciudad, País',
-      rol: 'Gerente',
+      nombreCompleto: '',
+    fechaRegistro: '',
+    fechaNacimiento: '',
+    correo: '',
+    telefono: '',
+    rol: '',
       fotoPerfil: require('@/assets/Perfil.jpg'), // Imagen por defecto
       mostrarModal: false,
       telefonoEditado: '',
       direccionEditada: '',
     };
   },
+  mounted() {
+    this.obtenerUsuario();
+  },
   methods: {
+    async obtenerUsuario() {
+      try {
+    const datos = await api.obtenerUsuarioConPersona(); // Asegúrate de pasar el nombre de usuario si es necesario
+    console.log("Datos del usuario y persona:", datos);
+
+    const { usuario, persona } = datos;
+
+    this.nombreCompleto = `${persona.nombre} ${persona.apellido} ${persona.segundo_apellido}`;
+    this.fechaRegistro = usuario.fecha_registro;
+    this.fechaNacimiento = persona.fecha_nacimiento;
+    this.correo = usuario.correo;
+    this.telefono = persona.telefono;
+    this.rol = usuario.Rol;
+
+  } catch (err) {
+    console.error("Error al cargar datos del usuario:", err);
+  }
+    },
     abrirModal() {
       this.telefonoEditado = this.telefono;
       this.direccionEditada = this.direccion;
@@ -120,7 +136,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 /* Tarjeta de perfil */
 .profile-card {

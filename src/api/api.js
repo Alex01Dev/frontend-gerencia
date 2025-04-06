@@ -152,5 +152,28 @@ export default {
       console.error("Error al actualizar sucursal:", error.response?.data || error);
       throw error;
     }
-  }
+  },
+
+    // Último método del archivo, justo antes de cerrar el export default
+    async obtenerUsuarioConPersona() {
+      try {
+        const nombre_usuario = localStorage.getItem("usuarioLogueado");
+  
+        if (!nombre_usuario) {
+          throw new Error("Usuario no encontrado en localStorage");
+        }
+  
+        const response = await axios.get(`${API_URL}/usuario/${nombre_usuario}`, {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+        console.log("Usuario con datos de persona:", response.data);
+        return response.data;
+      } catch (error) {
+        console.error("Error al obtener usuario con datos de persona:", error.response?.data || error);
+        throw error;
+      }
+    }
+  
 };

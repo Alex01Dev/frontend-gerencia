@@ -41,31 +41,37 @@ export default {
   },
   methods: {
     async login() {
-  try {
-    // Llamada a la API para autenticar al usuario
-    const response = await api.loginUser(this.nombre_usuario, this.contrasena);
+      try {
+        const response = await api.loginUser(this.nombre_usuario, this.contrasena);
 
-    if (response && response.access_token) {
-      // Si la respuesta contiene un token, guardarlo en el almacenamiento local
-      localStorage.setItem("authenticated", true);
-      localStorage.setItem("token", response.access_token);
-      localStorage.setItem("esGerente", response.esGerente); // Guardar también el rol
-      localStorage.setItem("usuarioLogueado", response.usuarioLogueado);
-      
-      // Redirigir según el rol
-      if (response.esGerente) {
-        this.$router.push("/home");
-      } else {
-        this.$router.push("/error");
+        if (response && response.access_token) {
+          localStorage.setItem("authenticated", true);
+          localStorage.setItem("token", response.access_token);
+          localStorage.setItem("esGerente", response.esGerente);
+          localStorage.setItem("usuarioLogueado", response.usuarioLogueado);
+
+          if (response.esGerente) {
+            this.$router.push("/home");
+          } else {
+            this.$router.push("/error");
+          }
+        } else {
+          alert("Usuario o contraseña incorrectos");
+        }
+      } catch (error) {
+        console.error("Error en login:", error);
+        alert("Hubo un error al intentar iniciar sesión. Intenta nuevamente.");
       }
-    } else {
-      alert("Usuario o contraseña incorrectos");
-    }
-  } catch (error) {
-    console.error("Error en login:", error);
-    alert("Hubo un error al intentar iniciar sesión. Intenta nuevamente.");
-  }
-},
+    },
+    clearLocalStorage() {
+      localStorage.removeItem("authenticated");
+      localStorage.removeItem("token");
+      localStorage.removeItem("esGerente");
+      localStorage.removeItem("usuarioLogueado");
+    },
+  },
+  created() {
+    this.clearLocalStorage(); // Limpia el localStorage al cargar la vista
   },
 };
 </script>

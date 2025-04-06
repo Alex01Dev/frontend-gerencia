@@ -5,7 +5,7 @@
       <!-- Mensaje de error dentro del contenedor del juego -->
       <div class="error-message">
         <span class="error-icon">🚫</span> <!-- Ícono de prohibición -->
-        <h1>403 - Lo sentimos, no eres gerente.</h1>
+        <h1>403 - Lo sentimos, no eres parte del equipo de gerencia.</h1>
         <p>No te preocupes, mientras esperas a ser gerente, ¡puedes jugar este divertido juego!</p>
       </div>
 

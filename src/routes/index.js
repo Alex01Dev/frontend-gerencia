@@ -7,11 +7,12 @@ import RegisterView from '@/views/RegisterView.vue';
 import Perfil from '@/views/PerfilView.vue';
 import LandingPage from '@/views/LandingPageView.vue';
 import GameError from '@/components/GameError.vue';
+import NotFound from '@/components/NotFound.vue'; // Asegúrate de crear este componente
 
 const routes = [
   {
     path: '/',
-    redirect: '/inicio' // 👈 Siempre redirige a /landing al iniciar
+    redirect: '/inicio'
   },
   {
     path: '/error',
@@ -19,30 +20,33 @@ const routes = [
     component: GameError,
   },
   {
-    path:'/inicio',
+    path: '/inicio',
     name: 'LandingPage',
     component: LandingPage,
   },
-
   {
     path: '/home',
     name: 'Home',
     component: Home,
+    meta: { requiresAuth: true } 
   },
   {
     path: '/perfil',
     name: 'Perfil',
     component: Perfil,
+    meta: { requiresAuth: true } 
   },
   {
     path: '/dashboard',
     name: 'Dashboard',
     component: DashboardView,
+    meta: { requiresAuth: true } 
   },
   {
     path: '/sucursales',
     name: 'Sucursales',
     component: Sucursales,
+    meta: { requiresAuth: true } 
   },
   {
     path: '/login',
@@ -59,8 +63,15 @@ const routes = [
     name: 'Inicio',
     component: LandingPage,
   },
+  // 👇 ÚNICO CAMBIO: Ruta para manejar 404 (debe ir SIEMPRE al final)
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: NotFound // Usará tu componente NotFound.vue
+  }
 ];
 
+// El resto del código permanece EXACTAMENTE igual
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,

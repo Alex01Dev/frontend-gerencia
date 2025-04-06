@@ -50,7 +50,8 @@ export default {
       localStorage.setItem("authenticated", true);
       localStorage.setItem("token", response.access_token);
       localStorage.setItem("esGerente", response.esGerente); // Guardar también el rol
-
+      localStorage.setItem("usuarioLogueado", response.usuarioLogueado);
+      
       // Redirigir según el rol
       if (response.esGerente) {
         this.$router.push("/home");

@@ -25,13 +25,12 @@
   <style scoped>
   /* Contenedor principal */
   .perfil-container {
-    padding-top: 80px; /* Ajusta este valor según la altura de tu menú */
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: calc(100vh - 80px); /* Resta la altura del menú */
     padding: 10px;
     box-sizing: border-box;
-    margin-top: 46%;
+    margin-top: 350px;
   }
   </style>

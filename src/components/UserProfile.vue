@@ -70,9 +70,9 @@
           <span v-if="!primerApellidoEditado" class="error-message">campo requerido</span>
         </div>
         <div class="form-group">
-          <label for="segundo_apellido">Apellido Materno: <span class="required">*</span></label>
+          <label for="segundo_apellido">Apellido Materno: </label>
           <input type="text" id="segundo_apellido" v-model="segundoApellidoEditado" required />
-          <span v-if="!segundoApellidoEditado" class="error-message">campo requerido</span>
+          
         </div>
         <div class="form-group">
           <label for="telefono">Teléfono: <span class="required">*</span></label>
@@ -119,7 +119,7 @@ export default {
   },
   computed: {
     formInvalido() {
-      return !this.nombreEditado || !this.primerApellidoEditado || !this.segundoApellidoEditado ||
+      return !this.nombreEditado || !this.primerApellidoEditado || 
         !this.numeroTelefonicoEditado || this.telefonoInvalido;
     }
   },
@@ -306,6 +306,7 @@ export default {
   cursor: pointer;
   margin-top: 20px;
   transition: background 0.3s ease;
+  font-family: 'Poppins', sans-serif;
 }
 
 .edit-button:hover {
@@ -338,7 +339,7 @@ export default {
 .modal h2 {
   margin-bottom: 20px;
   font-size: 20px;
-  color: #007bff;
+  color: #4b0202;
 }
 
 .form-group {
@@ -372,10 +373,12 @@ export default {
   background: #28a745;
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
+  margin-top: 20px;
   transition: background 0.3s ease;
+  font-family: 'Poppins', sans-serif
 }
 
 .save-button:hover {
@@ -386,10 +389,12 @@ export default {
   background: #dc3545;
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
+  margin-top: 20px;
   transition: background 0.3s ease;
+  font-family: 'Poppins', sans-serif
 }
 
 .cancel-button:hover {

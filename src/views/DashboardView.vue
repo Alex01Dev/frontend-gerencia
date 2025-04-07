@@ -32,10 +32,8 @@
                 <td>{{ item['Rol'] }}</td>
                 <td>{{ item['Método de Pago'] }}</td>
                 <td>{{ item['Monto'] }}</td>
-                <td>{{ item['Detalles'] }}</td>
                 <td>{{ item['Estatus'] }}</td>
                 <td>{{ item['Fecha de Registro'] }}</td>
-                <td>{{ item['Fecha de Actualización'] }}</td>
                 <td>{{ item['Tipo de Transacción'] }}</td>
               </tr>
               <tr v-if="tableData.length === 0">
@@ -79,7 +77,15 @@ export default {
     return {
       showModal: false,
       tableData: [],
-      headers: ['Nombre Usuario', 'Rol', 'Método de Pago', 'Monto', 'Detalles', 'Estatus', 'Fecha de Registro', 'Fecha de Actualización', 'Tipo de Transacción'],
+      headers: [
+        'Nombre Usuario',
+        'Rol',
+        'Método de Pago',
+        'Monto',
+        'Estatus',
+        'Fecha de Registro',
+        'Tipo de Transacción',
+      ],
       reportesData: [
         { sucursal: 'Sucursal A', mes: 'Enero', ingresos: 10000, egresos: 5000, beneficio_neto: 5000, actividad: 'Activo' },
         { sucursal: 'Sucursal B', mes: 'Febrero', ingresos: 12000, egresos: 6000, beneficio_neto: 6000, actividad: 'Inactivo' },
@@ -120,29 +126,29 @@ export default {
       this.showModal = false;
     },
     async fetchTransacciones() {
-      try {
-        const transacciones = await api.obtenerTransacciones();
-        console.log('Datos recibidos de la API:', transacciones);
+  try {
+    const transacciones = await api.obtenerTransacciones();
+    console.log('Datos recibidos de la API:', transacciones);
 
-        this.tableData = transacciones.map(t => ({
-          'Nombre Usuario': t.nombre_usuario,
-          'Rol': t.rol,
-          'Método de Pago': t.metodo_pago,
-          'Monto': `$${t.monto}`,
-          'Detalles': t.detalles,
-          'Estatus': t.estatus,
-          'Fecha de Registro': new Date(t.fecha_registro).toLocaleString(),
-          'Fecha de Actualización': t.fecha_actualizacion 
-            ? new Date(t.fecha_actualizacion).toLocaleString() 
-            : 'N/A',
-          'Tipo de Transacción': t.tipo_transaccion
-        }));
+    this.tableData = transacciones.map(t => ({
+      'Nombre Usuario': t.nombre_usuario,
+      'Rol': t.rol,
+      'Método de Pago': t.metodo_pago,
+      'Monto': `$${t.monto.toFixed(2)}`, // Formatear el monto con dos decimales
+      'Detalles': t.detalles,
+      'Estatus': t.estatus,
+      'Fecha de Registro': new Date(t.fecha_registro).toLocaleString(),
+      'Fecha de Actualización': t.fecha_actualizacion 
+        ? new Date(t.fecha_actualizacion).toLocaleString() 
+        : 'N/A',
+      'Tipo de Transacción': t.tipo_transaccion,
+    }));
 
-        console.log('Datos mapeados para tabla:', this.tableData);
-      } catch (error) {
-        console.error("Error al obtener transacciones:", error);
-      }
-    },
+    console.log('Datos mapeados para tabla:', this.tableData);
+  } catch (error) {
+    console.error("Error al obtener transacciones:", error);
+  }
+},
   },
   mounted() {
     this.fetchTransacciones(); // Llamar a la API al cargar el componente para obtener todas las transacciones
@@ -162,6 +168,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  min-width: 1100px; /* Ancho mínimo para la vista de escritorio */
   padding: 100px;
   height: calc(100vh - 60px); /* Ajusta la altura del contenido */
 }

@@ -5,7 +5,8 @@
       <!-- Gráficas -->
       <div class="charts">
         <div class="chart-container">
-          <ZoomableTimeseriesChart :data="tableData" />
+          <!-- Pasa los datos formateados a la gráfica -->
+          <ZoomableTimeseriesChart :data="chartData" />
         </div>
         <div class="chart-container stacked-column-chart">
           <StackedColumnChart :data="graficaReportesData" />
@@ -59,6 +60,7 @@ export default {
       showModal: false,
       tableData: [], // Datos originales de la API
       formattedTableData: [], // Datos formateados para DataTable
+      chartData: [], // Datos formateados para la gráfica
       headers: [
         'Nombre Usuario',
         'Rol',
@@ -86,6 +88,7 @@ export default {
     handleTransaction(transaction) {
       this.tableData.push(transaction);
       this.formatTableData(); // Actualiza los datos formateados
+      this.updateChartData(); // Actualiza los datos de la gráfica
       this.showModal = false;
     },
     async fetchTransacciones() {
@@ -96,8 +99,9 @@ export default {
         // Guarda los datos originales
         this.tableData = transacciones;
 
-        // Formatea los datos para DataTable
+        // Formatea los datos para la tabla y la gráfica
         this.formatTableData();
+        this.updateChartData();
       } catch (error) {
         console.error("Error al obtener transacciones:", error);
       }
@@ -114,6 +118,14 @@ export default {
         tipoTransaccion: t.tipo_transaccion,
       }));
     },
+    updateChartData() {
+  // Convierte los datos al formato esperado por la gráfica
+  this.chartData = this.tableData.map(t => ({
+    monto: parseFloat(t.monto), // Monto como número
+    tipoTransaccion: t.tipo_transaccion, // Tipo de transacción
+  }));
+  console.log('Datos para la gráfica:', this.chartData); // Verifica los datos
+},
   },
   mounted() {
     this.fetchTransacciones(); // Llama a la API al cargar el componente

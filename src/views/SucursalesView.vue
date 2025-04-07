@@ -11,7 +11,7 @@
         <p><strong>Dirección:</strong> {{ sucursal.Direccion }}</p>
         <p><strong>Teléfono:</strong> {{ sucursal.Telefono }}</p>
         <p><strong>Correo:</strong> {{ sucursal.Correo_Electronico }}</p>
-        <p><strong>Gerente Encargado:</strong> {{ sucursal.Responsable_Id }}</p>
+        <p><strong>Gerente Encargado:</strong> {{ sucursal.Responsable_Nombre }}</p>
         <p><strong>Capacidad Máxima:</strong> {{ sucursal.Capacidad_Maxima }}</p>
         <p><strong>Estatus:</strong> {{ sucursal.Estatus }}</p>
         <p><strong>Fecha de Registro:</strong> {{ formatearFecha(sucursal.Fecha_Registro) }}</p>

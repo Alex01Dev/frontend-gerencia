@@ -106,21 +106,21 @@ export default {
       throw error;
     }
   },
-  async obtenerGerentesActivos() {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(`${API_URL}/gerentes/activos`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error al obtener gerentes:", error.response?.data || error);
-      throw error;
-    }
-  },
+  // async obtenerGerentesActivos() {
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const response = await axios.get(`${API_URL}/gerentes/activos`, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error("Error al obtener gerentes:", error.response?.data || error);
+  //     throw error;
+  //   }
+  // },
 
   async registrarSucursal(sucursalData) {
     try {
@@ -191,6 +191,37 @@ export default {
         console.error("Error al actualizar persona:", error.response?.data || error);
         throw error;
       }
-    }
-  
+    },
+    async obtenerSucursales(skip = 0, limit = 10) {
+      try {
+        const token = localStorage.getItem("token"); // si el endpoint requiere autenticación
+        const response = await axios.get(`${API_URL}/sucursales/`, {
+          params: { skip, limit },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // solo si es necesario
+          },
+        });
+        return response.data;
+      } catch (error) {
+        console.error("Error al obtener sucursales:", error.response?.data || error);
+        throw error;
+      }
+    },
+    async eliminarSucursal(sucursalId) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`${API_URL}/sucursales/${sucursalId}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log("Sucursal eliminada:", response.data);
+        return response.data;
+      } catch (error) {
+        console.error("Error al eliminar sucursal:", error.response?.data || error);
+        throw error;
+      }
+    },
 };

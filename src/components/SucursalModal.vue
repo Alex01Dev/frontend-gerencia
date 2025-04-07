@@ -8,12 +8,12 @@
           <label for="nombre">Nombre:</label>
           <input type="text" id="nombre" v-model="sucursal.nombre" required />
         </div>
-        
+
         <div class="form-group">
           <label for="direccion">Dirección:</label>
           <input type="text" id="direccion" v-model="sucursal.direccion" required />
         </div>
-          
+
         <div class="form-group">
           <label for="telefono">Teléfono:</label>
           <input 
@@ -25,7 +25,7 @@
             title="Ingrese un número de 10 dígitos"
           />
         </div>
-        
+
         <div class="form-group">
           <label for="gerenteEncargado">Gerente Encargado:</label>
           <select 
@@ -43,7 +43,7 @@
             </option>
           </select>
         </div>
-        
+
         <div class="form-group">
           <label for="capacidadMaxima">Capacidad Máxima:</label>
           <input 
@@ -54,7 +54,7 @@
             required 
           />
         </div>
-        
+
         <div class="form-group">
           <label for="horario">Horario:</label>
           <input 
@@ -66,7 +66,6 @@
           />
         </div>
 
-                <!-- Campo de detalles -->
         <div class="form-group">
           <label for="detalles">Detalles:</label>
           <textarea 
@@ -77,7 +76,7 @@
             required
           ></textarea>
         </div>
-        
+
         <div class="form-group" v-if="isEdit">
           <label>Estatus:</label>
           <div class="radio-group">
@@ -97,7 +96,7 @@
             </label>
           </div>
         </div>
-        
+
         <div class="form-actions">
           <button type="button" @click="closeModal">Cancelar</button>
           <button type="submit">{{ isEdit ? 'Actualizar' : 'Registrar' }}</button>
@@ -108,8 +107,6 @@
 </template>
 
 <script>
-import api from '@/api/api';
-
 export default {
   props: {
     isVisible: Boolean,
@@ -126,13 +123,17 @@ export default {
         capacidad_maxima: 0,
         horario_disponibilidad: '',
         detalles: '',
-        estatus: 'Activa', // Enviar como string
+        estatus: 'Activa',
       },
-      gerentes: [],
+      gerentes: [
+        { id: 1, nombre_completo: 'Juan Pérez' },
+        { id: 2, nombre_completo: 'María Gómez' },
+        { id: 3, nombre_completo: 'Carlos Sánchez' },
+      ],
     };
   },
-  async created() {
-    await this.cargarGerentes();
+  created() {
+    // Nada que cargar desde API
   },
   watch: {
     isVisible(newVal) {
@@ -145,14 +146,6 @@ export default {
     },
   },
   methods: {
-    async cargarGerentes() {
-      try {
-        this.gerentes = await api.obtenerGerentesActivos();
-      } catch (error) {
-        console.error('Error al cargar gerentes:', error);
-        this.$emit('error', 'No se pudieron cargar los gerentes');
-      }
-    },
     cargarDatosEdicion() {
       this.sucursal = {
         nombre: this.sucursalData.nombre,
@@ -169,65 +162,44 @@ export default {
       this.$emit('close');
     },
     async submitForm() {
-      // Validación de campos
       if (!this.validarFormulario()) {
         return;
       }
 
-      try {
-        const datosParaEnviar = {
-          nombre: this.sucursal.nombre.trim(),
-          direccion: this.sucursal.direccion.trim(),
-          responsable_id: parseInt(this.sucursal.responsable_id, 10), // Asegurarse de que sea un número entero
-          capacidad_maxima: parseInt(this.sucursal.capacidad_maxima, 10), // Asegurarse de que sea un número entero
-          horario_disponibilidad: this.sucursal.horario_disponibilidad.trim(),
-          detalles: this.sucursal.detalles.trim(),
-          estatus: this.sucursal.estatus, // Enviar como string ("Activa" o "Inactiva")
-        };
+      const datosParaEnviar = {
+        nombre: this.sucursal.nombre.trim(),
+        direccion: this.sucursal.direccion.trim(),
+        telefono: this.sucursal.telefono.trim(),
+        responsable_id: parseInt(this.sucursal.responsable_id, 10),
+        capacidad_maxima: parseInt(this.sucursal.capacidad_maxima, 10),
+        horario_disponibilidad: this.sucursal.horario_disponibilidad.trim(),
+        detalles: this.sucursal.detalles.trim(),
+        estatus: this.sucursal.estatus,
+      };
 
-        console.log('Datos enviados al backend:', datosParaEnviar);
+      console.log('Simulación de envío al backend:', datosParaEnviar);
 
-        if (this.isEdit) {
-          await api.actualizarSucursal(this.sucursalData.id, datosParaEnviar);
-          this.$emit('success', 'Sucursal actualizada correctamente');
-        } else {
-          await api.registrarSucursal(datosParaEnviar);
-          this.$emit('success', 'Sucursal registrada correctamente');
-        }
+      // Simula una espera como si fuera una petición real
+      await new Promise(resolve => setTimeout(resolve, 500));
 
-        this.closeModal();
-        this.$emit('refresh');
-      } catch (error) {
-        console.error('Error al guardar sucursal:', error);
-        this.$emit('error', error.response?.data?.detail || 'Error al guardar la sucursal');
+      if (this.isEdit) {
+        this.$emit('success', 'Sucursal actualizada correctamente (simulada)');
+      } else {
+        this.$emit('success', 'Sucursal registrada correctamente (simulada)');
       }
+
+      this.closeModal();
+      this.$emit('refresh');
     },
     validarFormulario() {
       const errores = [];
 
-      if (!this.sucursal.nombre?.trim()) {
-        errores.push('El nombre es requerido');
-      }
-
-      if (!this.sucursal.direccion?.trim()) {
-        errores.push('La dirección es requerida');
-      }
-
-      if (!this.sucursal.responsable_id) {
-        errores.push('Debe seleccionar un gerente responsable');
-      }
-
-      if (!this.sucursal.capacidad_maxima || this.sucursal.capacidad_maxima <= 0) {
-        errores.push('La capacidad máxima debe ser mayor a 0');
-      }
-
-      if (!this.sucursal.horario_disponibilidad?.trim()) {
-        errores.push('El horario es requerido');
-      }
-
-      if (!this.sucursal.detalles?.trim()) {
-        errores.push('Los detalles son requeridos');
-      }
+      if (!this.sucursal.nombre?.trim()) errores.push('El nombre es requerido');
+      if (!this.sucursal.direccion?.trim()) errores.push('La dirección es requerida');
+      if (!this.sucursal.responsable_id) errores.push('Debe seleccionar un gerente responsable');
+      if (!this.sucursal.capacidad_maxima || this.sucursal.capacidad_maxima <= 0) errores.push('La capacidad máxima debe ser mayor a 0');
+      if (!this.sucursal.horario_disponibilidad?.trim()) errores.push('El horario es requerido');
+      if (!this.sucursal.detalles?.trim()) errores.push('Los detalles son requeridos');
 
       if (errores.length > 0) {
         this.$emit('error', errores.join(', '));
@@ -245,13 +217,12 @@ export default {
         capacidad_maxima: 0,
         horario_disponibilidad: '',
         detalles: '',
-        estatus: 'Activa', // Enviar como string
+        estatus: 'Activa',
       };
     },
   },
 };
 </script>
-
 
 <style scoped>
 .modal {
@@ -278,14 +249,13 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Estilos adicionales para el campo de detalles */
 textarea {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
   border: 1px solid #ddd;
   border-radius: 4px;
-  resize: vertical; /* Permitir redimensionar verticalmente */
+  resize: vertical;
 }
 
 .close {

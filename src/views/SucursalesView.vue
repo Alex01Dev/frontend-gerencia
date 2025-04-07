@@ -6,19 +6,25 @@
     <div class="sucursales-list">
       <div v-for="sucursal in sucursales" :key="sucursal.id" class="sucursal-card">
         <div class="card-header">
-          <h2>{{ sucursal.nombre }}</h2>
+          <h2>{{ sucursal.Nombre }}</h2>
         </div>
-        <p><strong>Dirección:</strong> {{ sucursal.direccion }}</p>
-        <p><strong>Gerente Encargado:</strong> {{ sucursal.gerenteEncargado }}</p>
-        <p><strong>Capacidad Máxima:</strong> {{ sucursal.capacidadMaxima }}</p>
-        <p><strong>Total de Empleados:</strong> {{ sucursal.totalEmpleados }}</p>
-        <p><strong>Horario:</strong> {{ sucursal.horario }}</p>
+        <p><strong>Dirección:</strong> {{ sucursal.Direccion }}</p>
+        <p><strong>Teléfono:</strong> {{ sucursal.Telefono }}</p>
+        <p><strong>Correo:</strong> {{ sucursal.Correo_Electronico }}</p>
+        <p><strong>Gerente Encargado:</strong> {{ sucursal.Responsable_Id }}</p>
+        <p><strong>Capacidad Máxima:</strong> {{ sucursal.Capacidad_Maxima }}</p>
+        <p><strong>Estatus:</strong> {{ sucursal.Estatus }}</p>
+        <p><strong>Fecha de Registro:</strong> {{ formatearFecha(sucursal.Fecha_Registro) }}</p>
+        <p v-if="sucursal.Fecha_Actualizacion"><strong>Última Actualización:</strong> {{
+          formatearFecha(sucursal.Fecha_Actualizacion) }}</p>
         <button @click="openModal(true, sucursal)" class="edit-button">Editar</button>
         <button @click="deleteSucursal(sucursal.id)" class="delete-button">Eliminar</button>
       </div>
     </div>
     <SucursalModal :isVisible="showModal" :isEdit="isEdit" :sucursalData="currentSucursal" :gerentes="gerentes"
       @close="showModal = false" @submit="handleSucursal" />
+    <ConfirmModal :isVisible="confirmModalVisible" message="¿Estás seguro de que deseas eliminar esta sucursal?"
+      @confirm="confirmDelete" @cancel="cancelDelete" />
 
   </div>
 </template>
@@ -26,9 +32,11 @@
 <script>
 import Menu from '@/components/MainMenu.vue';
 import SucursalModal from '@/components/SucursalModal.vue';
+import ConfirmModal from '@/components/ModalComponent.vue';
+import api from "../api/api.js";
 
 export default {
-  components: { Menu, SucursalModal },
+  components: { Menu, SucursalModal,ConfirmModal,  },
   name: 'SucursalesView',
   data() {
     return {
@@ -43,63 +51,99 @@ export default {
         { id: 5, nombre: 'Luis Martínez' },
         { id: 6, nombre: 'Sofía Ramírez' },
       ],
-      sucursales: [
-        { id: 1, nombre: 'Sucursal Centro', direccion: 'Calle Principal #123, Centro', telefono: '555-1234', gerenteEncargado: 'Juan Pérez', capacidadMaxima: 200, totalEmpleados: 20, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
-        { id: 2, nombre: 'Sucursal Norte', direccion: 'Avenida Norte #456, Zona Norte', telefono: '555-5678', gerenteEncargado: 'Ana Gómez', capacidadMaxima: 150, totalEmpleados: 15, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
-        { id: 3, nombre: 'Sucursal Sur', direccion: 'Calle Sur #789, Zona Sur', telefono: '555-9101', gerenteEncargado: 'Carlos Ruiz', capacidadMaxima: 100, totalEmpleados: 10, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
-        { id: 4, nombre: 'Sucursal Este', direccion: 'Avenida Este #321, Zona Este', telefono: '555-1122', gerenteEncargado: 'María López', capacidadMaxima: 120, totalEmpleados: 12, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
-        { id: 5, nombre: 'Sucursal Oeste', direccion: 'Calle Oeste #654, Zona Oeste', telefono: '555-3344', gerenteEncargado: 'Luis Martínez', capacidadMaxima: 180, totalEmpleados: 18, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' },
-        { id: 6, nombre: 'Sucursal Industrial', direccion: 'Parque Industrial #777', telefono: '555-7788', gerenteEncargado: 'Sofía Ramírez', capacidadMaxima: 80, totalEmpleados: 8, horario: '6:00 AM - 10:00 PM', estatus: 'Activo' }
-      ],
+      sucursales: [],
+      confirmModalVisible: false,   // <-- Aquí
+      sucursalToDelete: null
     };
   },
+  mounted() {
+    this.cargarSucursales();
+  },
   methods: {
+    // Cargar todas las sucursales
+    async cargarSucursales() {
+      try {
+        const data = await api.obtenerSucursales();
+        console.log("Sucursales cargadas:", data);
+        this.sucursales = data;
+      } catch (error) {
+        console.log("Error al cargar sucursales:", error);
+      }
+    },
+
+    // Abrir el modal para agregar o editar
     openModal(isEdit, sucursal = null) {
       this.isEdit = isEdit;
       this.currentSucursal = isEdit ? { ...sucursal } : null;
       this.showModal = true;
     },
-    handleSucursal(sucursal) {
-      // Convertir valores numéricos y validar que sean correctos
-      const capacidadMaxima = parseInt(sucursal.capacidadMaxima, 10);
-      const totalEmpleados = parseInt(sucursal.totalEmpleados, 10);
 
-      // Validar que todos los campos requeridos estén completos y sean válidos
+    // Manejar el formulario de agregar/editar sucursal
+    async handleSucursal(sucursal) {
+      const capacidadMaxima = parseInt(sucursal.capacidadMaxima, 10);
+
       if (
         !sucursal.nombre?.trim() ||
         !sucursal.direccion?.trim() ||
         !sucursal.telefono?.trim() ||
         !sucursal.gerenteEncargado ||
-        isNaN(capacidadMaxima) || capacidadMaxima <= 0 ||
-        isNaN(totalEmpleados) || totalEmpleados < 0 ||
-        !sucursal.horario?.trim() ||
-        !sucursal.estatus?.trim()
+        isNaN(capacidadMaxima) || capacidadMaxima <= 0
       ) {
         alert('Por favor, complete todos los campos requeridos correctamente.');
-        return; // Detener la ejecución si hay campos vacíos o no válidos
+        return;
       }
 
-      // Asignar valores corregidos
       sucursal.capacidadMaxima = capacidadMaxima;
-      sucursal.totalEmpleados = totalEmpleados;
 
-      // Actualizar o agregar la sucursal
-      if (this.isEdit) {
-        const index = this.sucursales.findIndex(s => s.id === sucursal.id);
-        if (index !== -1) {
-          this.sucursales.splice(index, 1, sucursal);
+      try {
+        if (this.isEdit) {
+          await api.actualizarSucursal(sucursal.id, sucursal);
+        } else {
+          await api.registrarSucursal(sucursal);
         }
-      } else {
-        sucursal.id = this.sucursales.length + 1;
-        this.sucursales.push(sucursal);
-      }
 
-      // Cerrar el modal después de registrar/actualizar
-      this.showModal = false;
+        await this.cargarSucursales();
+        this.showModal = false;
+      } catch (error) {
+        console.error("Error al guardar sucursal:", error);
+      }
     },
-    deleteSucursal(id) {
-      this.sucursales = this.sucursales.filter(s => s.id !== id);
+
+    // Eliminar una sucursal (soft delete)
+    async deleteSucursal(id) {
+      this.sucursalToDelete = id;
+      this.confirmModalVisible = true;
     },
+    confirmDelete() {
+      if (!this.sucursalToDelete) return;
+
+      api.eliminarSucursal(this.sucursalToDelete)
+        .then(() => {
+          this.cargarSucursales();
+        })
+        .catch(error => {
+          console.error("Error al eliminar la sucursal:", error);
+          alert("No se pudo eliminar la sucursal.");
+        })
+        .finally(() => {
+          this.confirmModalVisible = false;
+          this.sucursalToDelete = null;
+        });
+    },
+    cancelDelete() {
+      this.confirmModalVisible = false;
+      this.sucursalToDelete = null;
+    },
+
+    // Función para formatear la fecha
+    formatearFecha(fechaISO) {
+      if (!fechaISO) return 'Sin registro';
+      const fecha = new Date(fechaISO);
+      return fecha.toLocaleDateString('es-MX', {
+        year: 'numeric', month: 'long', day: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
   },
 };
 </script>
@@ -107,7 +151,6 @@ export default {
 <style scoped>
 .sucursales-view {
   margin-top: 850px;
-  /* Ajusta el margen superior según sea necesario */
   padding: 20px;
   color: black;
 }
@@ -117,7 +160,6 @@ export default {
   flex-wrap: wrap;
   gap: 40px;
   justify-content: center;
-  /* Centra las cards horizontalmente */
 }
 
 .sucursal-card {
@@ -125,9 +167,7 @@ export default {
   color: black;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 11px 30px 41px 0px rgba(0,0,0,0.75);
--webkit-box-shadow: 11px 30px 41px 0px rgba(0,0,0,0.75);
--moz-box-shadow: 11px 30px 41px 0px rgba(0,0,0,0.75);
+  box-shadow: 11px 30px 41px 0px rgba(0, 0, 0, 0.75);
   flex: 1 1 calc(33.333% - 20px);
   width: 220px;
   transition: transform 0.3s ease-in-out;
@@ -180,14 +220,9 @@ p {
   transform: translateY(-3px);
 }
 
-.add-sucursal-button .icon {
-  font-size: 20px;
-  margin-right: 10px;
-}
-
 .edit-button,
 .delete-button {
-  padding: 12px 24px;
+  padding: 12px;
   background-color: #0056b3;
   font-size: 16px;
   font-family: 'Poppins', sans-serif;
@@ -195,11 +230,10 @@ p {
   cursor: pointer;
   transition: 0.3s;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  border: none; 
+  border: none;
   margin-right: 16px;
   margin-top: 20px;
   color: white;
-  
 }
 
 .edit-button:hover,
@@ -218,7 +252,6 @@ p {
 @media (max-width: 768px) {
   .sucursal-card {
     flex: 1 1 100%;
-    /* Las cards ocupan el 100% del ancho en pantallas pequeñas */
   }
 }
 </style>

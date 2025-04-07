@@ -17,10 +17,8 @@
           <td>{{ item.rol }}</td>
           <td>{{ item.metodoPago }}</td>
           <td>{{ item.monto }}</td>
-          <td>{{ item.detalles }}</td>
           <td>{{ item.estatus }}</td>
           <td>{{ item.fechaRegistro }}</td>
-          <td>{{ item.fechaActualizacion }}</td>
           <td>{{ item.tipoTransaccion }}</td>
         </tr>
       </tbody>

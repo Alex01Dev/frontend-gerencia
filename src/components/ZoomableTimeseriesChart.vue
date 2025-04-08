@@ -1,6 +1,8 @@
 <template>
   <div id="chart">
     <ApexChart
+      v-if="series.length > 0"
+      :key="chartKey"
       type="pie"
       :options="chartOptions"
       :series="series"
@@ -9,6 +11,8 @@
 </template>
 
 <script>
+import { computed, ref, watch } from 'vue';
+
 export default {
   name: 'SimplePieChart',
   props: {
@@ -18,35 +22,37 @@ export default {
     },
   },
   setup(props) {
-    // Agrupar los datos por tipo de transacción
-    const groupedData = props.data.reduce((acc, item) => {
-      if (!acc[item.tipoTransaccion]) {
-        acc[item.tipoTransaccion] = 0;
-      }
-      acc[item.tipoTransaccion] += item.monto;
-      return acc;
-    }, {});
+    const chartKey = ref(0);
+    
+    const groupedData = computed(() => {
+      return props.data.reduce((acc, item) => {
+        const tipo = item.tipoTransaccion || 'Sin tipo';
+        if (!acc[tipo]) {
+          acc[tipo] = 0;
+        }
+        acc[tipo] += item.monto || 0;
+        return acc;
+      }, {});
+    });
 
-    // Extraer las series (montos) y etiquetas (tipos de transacción)
-    const series = Object.values(groupedData); // Montos agrupados
-    const labels = Object.keys(groupedData); // Tipos de transacción
+    const series = computed(() => Object.values(groupedData.value));
+    const labels = computed(() => Object.keys(groupedData.value));
 
-    console.log('Series:', series); // Verifica los montos agrupados
-    console.log('Labels:', labels); // Verifica los tipos de transacción
-
-    // Configurar las opciones de la gráfica
-    const chartOptions = {
+    const chartOptions = computed(() => ({
       chart: {
-        width: 380,
+        width: '100%',
         type: 'pie',
+        animations: {
+          enabled: true,
+        },
       },
-      labels: labels, // Etiquetas basadas en los tipos de transacción
+      labels: labels.value,
       responsive: [
         {
           breakpoint: 480,
           options: {
             chart: {
-              width: 200,
+              width: '100%',
             },
             legend: {
               position: 'bottom',
@@ -54,11 +60,16 @@ export default {
           },
         },
       ],
-    };
+    }));
+
+    watch(() => props.data, () => {
+      chartKey.value += 1;
+    }, { deep: true });
 
     return {
       series,
       chartOptions,
+      chartKey,
     };
   },
 };
@@ -67,6 +78,7 @@ export default {
 <style scoped>
 #chart {
   width: 100%;
-  min-height: 300px; /* Asegúrate de que tenga una altura mínima */
+  min-height: 400px;
+  position: relative;
 }
 </style>

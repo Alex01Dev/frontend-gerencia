@@ -77,7 +77,7 @@ export default {
 
 <style scoped>
 #chart {
-  width: 100%;
+  width: 90%;
   min-height: 400px;
   position: relative;
 }

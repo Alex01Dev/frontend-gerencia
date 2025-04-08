@@ -151,7 +151,7 @@ export default {
 <style scoped>
 .sucursales-view {
   margin-top: 850px;
-  padding: 20px;
+  padding: 44px;
   color: black;
 }
 
@@ -168,10 +168,15 @@ export default {
   padding: 20px;
   border-radius: 12px;
   box-shadow: 11px 30px 41px 0px rgba(0, 0, 0, 0.75);
-  flex: 1 1 calc(33.333% - 20px);
-  width: 220px;
+  flex: 1 1 100%;
+  min-width: 320px;
+  max-width: 420px;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   transition: transform 0.3s ease-in-out;
 }
+
 
 .sucursal-card:hover {
   transform: translateY(-5px);

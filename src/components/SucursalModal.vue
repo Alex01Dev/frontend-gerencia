@@ -16,85 +16,41 @@
 
         <div class="form-group">
           <label for="telefono">Teléfono:</label>
-          <input 
-            type="text" 
-            id="telefono" 
-            v-model="sucursal.telefono" 
-            required 
-            pattern="[0-9]{10}"
-            title="Ingrese un número de 10 dígitos"
-          />
+          <input type="text" id="telefono" v-model="sucursal.telefono" required pattern="[0-9]{10}"
+            title="Ingrese un número de 10 dígitos" />
+        </div>
+        <div class="form-group">
+          <label for="email">Correo:</label>
+          <input type="email" id="correo" v-model="sucursal.correo_electronico" required
+            title="Ingrese un correo válido" />
         </div>
 
         <div class="form-group">
-          <label for="gerenteEncargado">Gerente Encargado:</label>
-          <select 
-            id="gerenteEncargado" 
-            v-model="sucursal.responsable_id" 
-            required
-          >
-            <option value="">Seleccione un gerente</option>
-            <option 
-              v-for="gerente in gerentes" 
-              :key="gerente.id" 
-              :value="gerente.id"
-            >
-              {{ gerente.nombre_completo }}
-            </option>
-          </select>
-        </div>
+  <label for="gerenteEncargado">Gerente Encargado:</label>
+  <input
+    type="text"
+    id="gerenteEncargado"
+    v-model="busquedaGerente"
+    placeholder="Buscar gerente..."
+    @input="buscarGerente"
+    class="input"
+  />
+  
+  <ul v-if="gerentesFiltrados.length > 0" class="search-results">
+    <li
+      v-for="gerente in gerentesFiltrados"
+      :key="gerente.id"
+      @click="seleccionarGerente(gerente)"
+      class="search-item"
+    >
+      {{ gerente.nombre_usuario }}
+    </li>
+  </ul>
+</div>
 
         <div class="form-group">
           <label for="capacidadMaxima">Capacidad Máxima:</label>
-          <input 
-            type="number" 
-            id="capacidadMaxima" 
-            v-model.number="sucursal.capacidad_maxima" 
-            min="1"
-            required 
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="horario">Horario:</label>
-          <input 
-            type="text" 
-            id="horario" 
-            v-model="sucursal.horario_disponibilidad" 
-            placeholder="Ej: L-V 9:00-18:00"
-            required 
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="detalles">Detalles:</label>
-          <textarea 
-            id="detalles" 
-            v-model="sucursal.detalles" 
-            placeholder="Ingrese detalles adicionales sobre la sucursal"
-            rows="3"
-            required
-          ></textarea>
-        </div>
-
-        <div class="form-group" v-if="isEdit">
-          <label>Estatus:</label>
-          <div class="radio-group">
-            <label>
-              <input 
-                type="radio" 
-                v-model="sucursal.estatus" 
-                value="Activa" 
-              /> Activa
-            </label>
-            <label>
-              <input 
-                type="radio" 
-                v-model="sucursal.estatus" 
-                value="Inactiva" 
-              /> Inactiva
-            </label>
-          </div>
+          <input type="number" id="capacidadMaxima" v-model.number="sucursal.capacidad_maxima" min="1" required />
         </div>
 
         <div class="form-actions">
@@ -107,6 +63,8 @@
 </template>
 
 <script>
+
+import api from "../api/api.js";
 export default {
   props: {
     isVisible: Boolean,
@@ -119,17 +77,14 @@ export default {
         nombre: '',
         direccion: '',
         telefono: '',
+        correo_electronico: '',
         responsable_id: '',
         capacidad_maxima: 0,
-        horario_disponibilidad: '',
-        detalles: '',
         estatus: 'Activa',
       },
-      gerentes: [
-        { id: 1, nombre_completo: 'Juan Pérez' },
-        { id: 2, nombre_completo: 'María Gómez' },
-        { id: 3, nombre_completo: 'Carlos Sánchez' },
-      ],
+      busquedaGerente: '',  // Lo que el usuario escribe en el input
+    gerentes: [],  // Lista completa de gerentes
+    gerentesFiltrados: [],
     };
   },
   created() {
@@ -138,6 +93,7 @@ export default {
   watch: {
     isVisible(newVal) {
       if (newVal) {
+        console.log("Datos recibidos en modal:", this.sucursalData); // <- DEBUG
         this.resetForm();
         if (this.isEdit && this.sucursalData) {
           this.cargarDatosEdicion();
@@ -151,10 +107,9 @@ export default {
         nombre: this.sucursalData.nombre,
         direccion: this.sucursalData.direccion,
         telefono: this.sucursalData.telefono || '',
+        correo_electronico: this.sucursalData.correo_electronico || '',
         responsable_id: this.sucursalData.responsable_id,
         capacidad_maxima: this.sucursalData.capacidad_maxima,
-        horario_disponibilidad: this.sucursalData.horario_disponibilidad,
-        detalles: this.sucursalData.detalles || '',
         estatus: this.sucursalData.estatus,
       };
     },
@@ -172,24 +127,24 @@ export default {
         telefono: this.sucursal.telefono.trim(),
         responsable_id: parseInt(this.sucursal.responsable_id, 10),
         capacidad_maxima: parseInt(this.sucursal.capacidad_maxima, 10),
-        horario_disponibilidad: this.sucursal.horario_disponibilidad.trim(),
-        detalles: this.sucursal.detalles.trim(),
         estatus: this.sucursal.estatus,
       };
 
-      console.log('Simulación de envío al backend:', datosParaEnviar);
+      try {
+        if (this.isEdit) {
+          await this.actualizarSucursal(this.sucursalData.id, datosParaEnviar);
 
-      // Simula una espera como si fuera una petición real
-      await new Promise(resolve => setTimeout(resolve, 500));
+          this.$emit("success", "Sucursal actualizada correctamente");
+        } else {
+          // Aquí iría tu lógica para registrar nueva sucursal
+          console.log("Lógica de registro no implementada aún");
+        }
 
-      if (this.isEdit) {
-        this.$emit('success', 'Sucursal actualizada correctamente (simulada)');
-      } else {
-        this.$emit('success', 'Sucursal registrada correctamente (simulada)');
+        this.closeModal();
+        this.$emit("refresh");
+      } catch (error) {
+        this.$emit("error", "Error al actualizar la sucursal");
       }
-
-      this.closeModal();
-      this.$emit('refresh');
     },
     validarFormulario() {
       const errores = [];
@@ -198,8 +153,6 @@ export default {
       if (!this.sucursal.direccion?.trim()) errores.push('La dirección es requerida');
       if (!this.sucursal.responsable_id) errores.push('Debe seleccionar un gerente responsable');
       if (!this.sucursal.capacidad_maxima || this.sucursal.capacidad_maxima <= 0) errores.push('La capacidad máxima debe ser mayor a 0');
-      if (!this.sucursal.horario_disponibilidad?.trim()) errores.push('El horario es requerido');
-      if (!this.sucursal.detalles?.trim()) errores.push('Los detalles son requeridos');
 
       if (errores.length > 0) {
         this.$emit('error', errores.join(', '));
@@ -220,7 +173,23 @@ export default {
         estatus: 'Activa',
       };
     },
+    async actualizarSucursal(sucursalId, sucursalData) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await api.put(`/sucursales/${sucursalId}`, sucursalData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return response.data;
+      } catch (error) {
+        console.error("Error al actualizar sucursal:", error.response?.data || error);
+        throw error;
+      }
+    },
   },
+
 };
 </script>
 

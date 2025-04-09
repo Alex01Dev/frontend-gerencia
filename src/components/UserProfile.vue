@@ -111,6 +111,7 @@ export default {
       rol: '',
       fotoPerfil: require('@/assets/Perfil.jpg'), // Imagen por defecto
       mostrarModal: false,
+      nombreEditado: '',
       primerApellidoEditado: '',
       segundoApellidoEditado: '',
       numeroTelefonicoEditado: '',
@@ -118,11 +119,11 @@ export default {
     };
   },
   computed: {
-    formInvalido() {
-      return !this.nombreEditado || !this.primerApellidoEditado || 
-        !this.numeroTelefonicoEditado || this.telefonoInvalido;
-    }
-  },
+  formInvalido() {
+    return !this.nombreEditado || !this.primerApellidoEditado || 
+      !this.numeroTelefonicoEditado || this.telefonoInvalido;
+  }
+},
   mounted() {
     this.obtenerUsuario();
   },

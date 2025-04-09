@@ -106,21 +106,6 @@ export default {
       throw error;
     }
   },
-  // async obtenerGerentesActivos() {
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     const response = await axios.get(`${API_URL}/gerentes/activos`, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-  //     return response.data;
-  //   } catch (error) {
-  //     console.error("Error al obtener gerentes:", error.response?.data || error);
-  //     throw error;
-  //   }
-  // },
 
   async registrarSucursal(sucursalData) {
     try {
@@ -153,6 +138,7 @@ export default {
       throw error;
     }
   },
+  
 
     // Último método del archivo, justo antes de cerrar el export default
     async obtenerUsuarioConPersona() {

@@ -36,7 +36,7 @@ import ConfirmModal from '@/components/ModalComponent.vue';
 import api from "../api/api.js";
 
 export default {
-  components: { Menu, SucursalModal,ConfirmModal,  },
+  components: { Menu, SucursalModal, ConfirmModal, },
   name: 'SucursalesView',
   data() {
     return {
@@ -72,9 +72,26 @@ export default {
     },
 
     // Abrir el modal para agregar o editar
+    // Abrir el modal para agregar o editar
     openModal(isEdit, sucursal = null) {
       this.isEdit = isEdit;
-      this.currentSucursal = isEdit ? { ...sucursal } : null;
+
+      if (isEdit && sucursal) {
+        // Mapear campos del backend al formato del formulario
+        this.currentSucursal = {
+          id: sucursal.id,
+          nombre: sucursal.Nombre,
+          direccion: sucursal.Direccion,
+          telefono: sucursal.Telefono,
+          correo_electronico: sucursal.Correo_Electronico,
+          responsable_id: sucursal.Responsable_Nombre , // <- Usa ID, no nombre
+          capacidad_maxima: sucursal.Capacidad_Maxima,
+          estatus: sucursal.Estatus
+        };
+      } else {
+        this.currentSucursal = null;
+      }
+
       this.showModal = true;
     },
 
@@ -228,10 +245,10 @@ p {
 .edit-button,
 .delete-button {
   padding: 12px;
-  background-color: #0056b3;
-  font-size: 16px;
+  background-color: #04182e;
+  font-size: 12px;
   font-family: 'Poppins', sans-serif;
-  border-radius: 30px;
+  border-radius: 16px;
   cursor: pointer;
   transition: 0.3s;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -243,7 +260,7 @@ p {
 
 .edit-button:hover,
 .delete-button:hover {
-  background-color: #053f7e;
+  background-color: #020305;
 }
 
 .delete-button {

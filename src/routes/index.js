@@ -7,7 +7,8 @@ import RegisterView from '@/views/RegisterView.vue';
 import Perfil from '@/views/PerfilView.vue';
 import LandingPage from '@/views/LandingPageView.vue';
 import GameError from '@/components/GameError.vue';
-import NotFound from '@/components/NotFound.vue'; // Asegúrate de crear este componente
+import NotFound from '@/components/NotFound.vue';// Asegúrate de crear este componente
+import ClientLanding from '@/views/ClientLandingView.vue'; 
 
 const routes = [
   {
@@ -23,6 +24,12 @@ const routes = [
     path: '/inicio',
     name: 'LandingPage',
     component: LandingPage,
+  },
+  {
+    path: '/cliente',
+    name: 'ClientLanding',
+    component: ClientLanding,
+    meta: { requiresAuth: true } 
   },
   {
     path: '/home',

@@ -53,7 +53,7 @@ export default {
           if (response.esGerente) {
             this.$router.push("/home");
           } else {
-            this.$router.push("/error");
+            this.$router.push("/cliente");
           }
         } else {
           alert("Usuario o contraseña incorrectos");

@@ -43,7 +43,7 @@
                         </p>
                         <a href="#" class="link">➡️ Agenda tu evaluación</a>
                     </div>
-                    <img src="../assets/landing_physio.jpeg" alt="Fisioterapia Deportiva" />
+                    <img src="../assets/landing_physio.jpg" alt="Fisioterapia Deportiva" />
                 </div>
 
                 <!-- Card de Membresías -->

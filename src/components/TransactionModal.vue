@@ -7,23 +7,36 @@
         <form @submit.prevent="submitForm">
           <div class="form-group">
             <label for="tipoTransaccion">Tipo de Transacción</label>
-            <select id="tipoTransaccion" v-model="form.tipoTransaccion" @change="handleTransactionTypeChange" required>
+            <select
+              id="tipoTransaccion"
+              v-model="form.tipoTransaccion"
+              @change="handleTransactionTypeChange"
+              required
+            >
               <option value="Ingreso">Ingreso</option>
               <option value="Egreso">Egreso</option>
             </select>
           </div>
+
           <div class="form-group">
             <label for="rol">Rol</label>
             <select id="rol" v-model="form.rol" @change="fetchUsuarios" required>
-              <option v-if="form.tipoTransaccion === 'Ingreso'" value="Cliente">Cliente</option>
-              <option v-if="form.tipoTransaccion === 'Ingreso'" value="Visitante">Visitante</option>
-              <option v-if="form.tipoTransaccion === 'Egreso'" value="Colaborador">Colaborador</option>
-              <option v-if="form.tipoTransaccion === 'Egreso'" value="Administrador">Administrador</option>
+              <option v-if="form.tipoTransaccion === 'Ingreso'" value="Cliente">
+                Cliente
+              </option>
+              <option v-if="form.tipoTransaccion === 'Ingreso'" value="Visitante">
+                Visitante
+              </option>
+              <option v-if="form.tipoTransaccion === 'Egreso'" value="Colaborador">
+                Colaborador
+              </option>
             </select>
           </div>
+
           <div class="form-group" v-if="form.rol !== 'Visitante'">
             <label for="nombreUsuario">Buscar Usuario</label>
             <input
+              list="usuariosList"
               type="text"
               id="nombreUsuario"
               v-model="searchQuery"
@@ -32,30 +45,37 @@
               autocomplete="off"
               required
             />
-            <!-- Mostrar la lista solo si hay texto en el buscador -->
-            <ul v-if="searchQuery && filteredUsuarios.length > 0" class="autocomplete-list">
-              <li
+            <datalist id="usuariosList">
+              <option
                 v-for="usuario in filteredUsuarios"
-                :key="usuario.id"
-                @click="selectUsuario(usuario)"
-                class="autocomplete-item"
+                :key="usuario.usuario_id"
+                :value="usuario.nombre_usuario"
               >
-                {{ usuario.nombre_usuario }}
-              </li>
-            </ul>
+                {{ usuario.nombre_usuario }} ({{ usuario.rol }})
+              </option>
+            </datalist>
           </div>
+
           <div class="form-group">
             <label for="metodoPago">Método de Pago</label>
-            <input type="text" id="metodoPago" v-model="form.metodoPago" required />
+            <select id="metodoPago" v-model="form.metodoPago" required>
+              <option value="TarjetaDebito">Tarjeta de Débito</option>
+              <option value="TarjetaCredito">Tarjeta de Crédito</option>
+              <option value="Efectivo">Efectivo</option>
+              <option value="Transferencia">Transferencia</option>
+            </select>
           </div>
+
           <div class="form-group">
             <label for="monto">Monto</label>
-            <input type="number" id="monto" v-model="form.monto" required />
+            <input type="number" id="monto" v-model="form.monto" min="0" required />
           </div>
+
           <div class="form-group">
             <label for="detalles">Detalles</label>
             <input type="text" id="detalles" v-model="form.detalles" required />
           </div>
+
           <button type="submit">Guardar</button>
         </form>
       </div>
@@ -74,16 +94,16 @@ export default {
     return {
       form: {
         rol: "",
-        nombreUsuario: "", // Este ahora almacenará el user_id
+        nombreUsuario: "", // Aquí se guardará el user_id
         metodoPago: "",
         monto: "",
         detalles: "",
         estatus: "Procesando",
         tipoTransaccion: "Ingreso",
       },
-      usuarios: [], // Lista completa de usuarios obtenidos de la API
-      filteredUsuarios: [], // Lista filtrada para el buscador
-      searchQuery: "", // Texto ingresado en el buscador
+      usuarios: [], // Lista completa de usuarios
+      filteredUsuarios: [],
+      searchQuery: "",
     };
   },
   methods: {
@@ -93,39 +113,49 @@ export default {
     async fetchUsuarios() {
       if (this.form.rol && this.form.rol !== "Visitante") {
         try {
-          const response = await api.obtenerUsuariosPorTransaccion(this.form.tipoTransaccion, this.form.rol);
+          const response = await api.obtenerUsuariosPorTransaccion(
+            this.form.tipoTransaccion,
+            this.form.rol
+          );
+          if (response.length === 0) {
+            alert("No se encontraron usuarios para este rol y tipo de transacción.");
+          }
           console.log("Usuarios obtenidos:", response);
-
-          // Guardamos los objetos completos
           this.usuarios = response;
         } catch (error) {
           console.error("Error al cargar usuarios:", error);
           this.usuarios = [];
+          alert("Error al obtener los usuarios.");
         }
       } else {
         this.usuarios = [];
       }
     },
     filterUsuarios() {
-      // Filtra los usuarios según el texto ingresado en el buscador
       const query = this.searchQuery.toLowerCase();
       this.filteredUsuarios = this.usuarios.filter((usuario) =>
         usuario.nombre_usuario.toLowerCase().includes(query)
       );
     },
-    selectUsuario(usuario) {
-      // Selecciona un usuario de la lista y actualiza el formulario
-      this.form.nombreUsuario = usuario.id; // Guarda el ID del usuario
-      this.searchQuery = usuario.nombre_usuario; // Muestra el nombre en el campo de búsqueda
-      this.filteredUsuarios = []; // Limpia la lista de sugerencias
-    },
     async submitForm() {
       try {
+        const usuario = this.usuarios.find((u) => u.nombre_usuario === this.searchQuery);
+        if (!usuario && this.form.rol !== "Visitante") {
+          alert("Por favor selecciona un usuario válido.");
+          return;
+        }
+
+        const monto = parseFloat(this.form.monto);
+        if (isNaN(monto) || monto <= 0) {
+          alert("Por favor ingresa un monto válido.");
+          return;
+        }
+
         const transaccionData = {
           tipo_transaccion: this.form.tipoTransaccion,
-          usuario_id: this.form.nombreUsuario, // Aquí es el user_id
+          usuario_id: usuario ? usuario.usuario_id : null,
           metodo_pago: this.form.metodoPago,
-          monto: parseFloat(this.form.monto),
+          monto: monto,
           detalles: this.form.detalles,
           estatus: this.form.estatus,
         };
@@ -139,6 +169,7 @@ export default {
         this.closeModal();
       } catch (error) {
         console.error("Error al registrar transacción:", error);
+        alert("Hubo un error al registrar la transacción.");
       }
     },
     handleTransactionTypeChange() {
@@ -146,6 +177,7 @@ export default {
       this.usuarios = [];
       this.filteredUsuarios = [];
       this.searchQuery = "";
+      this.fetchUsuarios(); // Asegurarnos de cargar usuarios al cambiar tipo de transacción
     },
   },
 };
@@ -264,7 +296,7 @@ button:hover {
     width: 95%;
     padding: 15px;
   }
-  
+
   .form-group input,
   .form-group select {
     padding: 10px;

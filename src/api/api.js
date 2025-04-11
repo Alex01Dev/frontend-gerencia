@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = " http://127.0.0.1:8000"; 
+const API_URL = "http://127.0.0.1:8000"; 
 
 export default {
   // Registro de usuario
@@ -51,17 +51,22 @@ export default {
    // Obtener usuarios por tipo de transacción y rol
    async obtenerUsuariosPorTransaccion(tipoTransaccion, rol) {
     try {
-      const token = localStorage.getItem("token"); // Asegúrate de almacenar el token al hacer login
-      const response = await axios.get(`${API_URL}/usuarios-por-transaccion`, {
-        params: { tipo_transaccion: tipoTransaccion, rol: rol },
+      console.log("Entrando al obtener usuarios por trans");
+      
+      const token = localStorage.getItem("token"); // Obtener token
+      const response = await axios.get(`${API_URL}/obtener-usuarios-por-transaccion`, {
+        params: {
+          tipo_transaccion: tipoTransaccion,
+          rol: rol
+        },
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Agregar el token aquí
+          Authorization: `Bearer ${token}`, // Incluir autenticación
         },
       });
       return response.data;
     } catch (error) {
-      console.error("Error al obtener usuarios:", error.response?.data || error);
+      console.error("Error al obtener usuarios:", error);
       throw error;
     }
   },
@@ -84,15 +89,17 @@ export default {
       }
       throw error;
     }
-  },
+  },  
 
-  async obtenerTransacciones(skip = 0, limit = 100, filters = {}) {
+  async obtenerTransacciones(skip = 0, filters = {}) {
     try {
+      console.log("OBTENER TODOOOOO");
+      
       const token = localStorage.getItem("token");
+  
       const response = await axios.get(`${API_URL}/obtener-todo`, {
         params: {
           skip,
-          limit,
           ...filters // Puedes pasar filtros opcionales aquí
         },
         headers: {
@@ -100,12 +107,17 @@ export default {
           Authorization: `Bearer ${token}`,
         },
       });
+  
+      console.log("Datos recibidos:", response.data);
       return response.data;
     } catch (error) {
       console.error("Error al obtener transacciones:", error.response?.data || error);
       throw error;
     }
   },
+
+  
+  
   // async obtenerGerentesActivos() {
   //   try {
   //     const token = localStorage.getItem("token");
@@ -137,6 +149,24 @@ export default {
       throw error;
     }
   },
+
+  
+  async obtenerGerentes() {
+    try {
+      const token = localStorage.getItem("token"); // Si el endpoint requiere autenticación
+      const response = await axios.get(`${API_URL}/gerentes`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Solo si es necesario
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error al obtener gerentes:", error.response?.data || error);
+      throw error;
+    }
+  },
+  
 
   async actualizarSucursal(sucursalId, sucursalData) {
     try {

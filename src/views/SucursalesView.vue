@@ -1,8 +1,12 @@
+Codigo de la vista de sucusal:
+
 <template>
   <Menu />
   <div class="sucursales-view">
     <h1>Sucursales</h1>
-    <button @click="openModal(false)" class="add-sucursal-button">Agregar Sucursal</button>
+    <button @click="openModal(false)" class="add-sucursal-button">
+      Agregar Sucursal
+    </button>
     <div class="sucursales-list">
       <div v-for="sucursal in sucursales" :key="sucursal.id" class="sucursal-card">
         <div class="card-header">
@@ -14,50 +18,61 @@
         <p><strong>Gerente Encargado:</strong> {{ sucursal.Responsable_Nombre }}</p>
         <p><strong>Capacidad Máxima:</strong> {{ sucursal.Capacidad_Maxima }}</p>
         <p><strong>Estatus:</strong> {{ sucursal.Estatus }}</p>
-        <p><strong>Fecha de Registro:</strong> {{ formatearFecha(sucursal.Fecha_Registro) }}</p>
-        <p v-if="sucursal.Fecha_Actualizacion"><strong>Última Actualización:</strong> {{
-          formatearFecha(sucursal.Fecha_Actualizacion) }}</p>
+        <p>
+          <strong>Fecha de Registro:</strong>
+          {{ formatearFecha(sucursal.Fecha_Registro) }}
+        </p>
+        <p v-if="sucursal.Fecha_Actualizacion">
+          <strong>Última Actualización:</strong>
+          {{ formatearFecha(sucursal.Fecha_Actualizacion) }}
+        </p>
         <button @click="openModal(true, sucursal)" class="edit-button">Editar</button>
-        <button @click="deleteSucursal(sucursal.id)" class="delete-button">Eliminar</button>
+        <button @click="deleteSucursal(sucursal.id)" class="delete-button">
+          Eliminar
+        </button>
       </div>
     </div>
-    <SucursalModal :isVisible="showModal" :isEdit="isEdit" :sucursalData="currentSucursal" :gerentes="gerentes"
-      @close="showModal = false" @submit="handleSucursal" />
-    <ConfirmModal :isVisible="confirmModalVisible" message="¿Estás seguro de que deseas eliminar esta sucursal?"
-      @confirm="confirmDelete" @cancel="cancelDelete" />
-
+    <SucursalModal
+      :isVisible="showModal"
+      :isEdit="isEdit"
+      :sucursalData="currentSucursal"
+      :gerentes="gerentes"
+      @close="showModal = false"
+      @crear="handleCrearSucursal"
+      @editar="handleEditarSucursal"
+    />
+    <ConfirmModal
+      :isVisible="confirmModalVisible"
+      message="¿Estás seguro de que deseas eliminar esta sucursal?"
+      @confirm="confirmDelete"
+      @cancel="cancelDelete"
+    />
   </div>
 </template>
 
 <script>
-import Menu from '@/components/MainMenu.vue';
-import SucursalModal from '@/components/SucursalModal.vue';
-import ConfirmModal from '@/components/ModalComponent.vue';
+import Menu from "@/components/MainMenu.vue";
+import SucursalModal from "@/components/SucursalModal.vue";
+import ConfirmModal from "@/components/ModalComponent.vue";
 import api from "../api/api.js";
 
 export default {
-  components: { Menu, SucursalModal,ConfirmModal,  },
-  name: 'SucursalesView',
+  components: { Menu, SucursalModal, ConfirmModal },
+  name: "SucursalesView",
   data() {
     return {
       showModal: false,
       isEdit: false,
       currentSucursal: null,
-      gerentes: [
-        { id: 1, nombre: 'Juan Pérez' },
-        { id: 2, nombre: 'Ana Gómez' },
-        { id: 3, nombre: 'Carlos Ruiz' },
-        { id: 4, nombre: 'María López' },
-        { id: 5, nombre: 'Luis Martínez' },
-        { id: 6, nombre: 'Sofía Ramírez' },
-      ],
       sucursales: [],
-      confirmModalVisible: false,   // <-- Aquí
-      sucursalToDelete: null
+      confirmModalVisible: false,
+      sucursalToDelete: null,
+      gerentes: [], // Lista de gerentes cargados
     };
   },
   mounted() {
     this.cargarSucursales();
+    this.cargarGerentes();
   },
   methods: {
     // Cargar todas las sucursales
@@ -71,41 +86,95 @@ export default {
       }
     },
 
+    // Cargar la lista de gerentes
+    async cargarGerentes() {
+      try {
+        const data = await api.obtenerGerentes();
+        console.log("Gerentes cargados:", data);
+        this.gerentes = data;
+      } catch (error) {
+        console.error("Error al cargar gerentes:", error);
+      }
+    },
+
     // Abrir el modal para agregar o editar
     openModal(isEdit, sucursal = null) {
       this.isEdit = isEdit;
-      this.currentSucursal = isEdit ? { ...sucursal } : null;
+
+      if (isEdit && sucursal) {
+        // Mapear campos del backend al formato del formulario
+        this.currentSucursal = {
+          id: sucursal.id,
+          Nombre: sucursal.Nombre,
+          Direccion: sucursal.Direccion,
+          Telefono: sucursal.Telefono,
+          Correo_Electronico: sucursal.Correo_Electronico,
+          Responsable_Id: sucursal.Responsable_Id,
+          Capacidad_Maxima: sucursal.Capacidad_Maxima,
+          Estatus: sucursal.Estatus,
+        };
+      } else {
+        // Limpiar los datos si es una creación
+        this.currentSucursal = {
+          id: null,
+          Nombre: "",
+          Direccion: "",
+          Telefono: "",
+          Correo_Electronico: "",
+          Responsable_Id: 0,
+          Capacidad_Maxima: 0,
+          Estatus: "Activa",
+        };
+      }
+
       this.showModal = true;
     },
 
-    // Manejar el formulario de agregar/editar sucursal
-    async handleSucursal(sucursal) {
-      const capacidadMaxima = parseInt(sucursal.capacidadMaxima, 10);
-
-      if (
-        !sucursal.nombre?.trim() ||
-        !sucursal.direccion?.trim() ||
-        !sucursal.telefono?.trim() ||
-        !sucursal.gerenteEncargado ||
-        isNaN(capacidadMaxima) || capacidadMaxima <= 0
-      ) {
-        alert('Por favor, complete todos los campos requeridos correctamente.');
-        return;
-      }
-
-      sucursal.capacidadMaxima = capacidadMaxima;
-
+    // Crear una nueva sucursal
+    async crearSucursal(sucursal) {
       try {
-        if (this.isEdit) {
-          await api.actualizarSucursal(sucursal.id, sucursal);
-        } else {
-          await api.registrarSucursal(sucursal);
-        }
-
+        await api.registrarSucursal(sucursal);
         await this.cargarSucursales();
-        this.showModal = false;
+        this.showModal = false; // Cerrar el modal después de guardar
       } catch (error) {
-        console.error("Error al guardar sucursal:", error);
+        console.error("Error al crear sucursal:", error);
+        alert("Ocurrió un error al crear la sucursal. Por favor, inténtelo de nuevo.");
+      }
+    },
+
+    // Editar una sucursal existente
+    async editarSucursal(sucursal) {
+      try {
+        // Asegúrate de que el id esté presente
+        if (!sucursal.id) {
+          throw new Error("El ID de la sucursal es requerido para actualizar.");
+        }
+        await api.actualizarSucursal(sucursal.id, sucursal);
+        await this.cargarSucursales();
+        this.showModal = false; // Cerrar el modal después de guardar
+      } catch (error) {
+        console.error("Error al editar sucursal:", error);
+        alert("Ocurrió un error al editar la sucursal. Por favor, inténtelo de nuevo.");
+      }
+    },
+
+    // Manejar la creación de una sucursal
+    async handleCrearSucursal(sucursal) {
+      try {
+        await this.crearSucursal(sucursal);
+      } catch (error) {
+        console.error("Error al manejar la creación de sucursal:", error);
+        alert("Ocurrió un error al guardar la sucursal.");
+      }
+    },
+
+    // Manejar la edición de una sucursal
+    async handleEditarSucursal(sucursal) {
+      try {
+        await this.editarSucursal(sucursal);
+      } catch (error) {
+        console.error("Error al manejar la edición de sucursal:", error);
+        alert("Ocurrió un error al actualizar la sucursal.");
       }
     },
 
@@ -117,11 +186,12 @@ export default {
     confirmDelete() {
       if (!this.sucursalToDelete) return;
 
-      api.eliminarSucursal(this.sucursalToDelete)
+      api
+        .eliminarSucursal(this.sucursalToDelete)
         .then(() => {
           this.cargarSucursales();
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Error al eliminar la sucursal:", error);
           alert("No se pudo eliminar la sucursal.");
         })
@@ -137,13 +207,16 @@ export default {
 
     // Función para formatear la fecha
     formatearFecha(fechaISO) {
-      if (!fechaISO) return 'Sin registro';
+      if (!fechaISO) return "Sin registro";
       const fecha = new Date(fechaISO);
-      return fecha.toLocaleDateString('es-MX', {
-        year: 'numeric', month: 'long', day: 'numeric',
-        hour: '2-digit', minute: '2-digit'
+      return fecha.toLocaleDateString("es-MX", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       });
-    }
+    },
   },
 };
 </script>
@@ -151,7 +224,7 @@ export default {
 <style scoped>
 .sucursales-view {
   margin-top: 850px;
-  padding: 20px;
+  padding: 44px;
   color: black;
 }
 
@@ -168,8 +241,12 @@ export default {
   padding: 20px;
   border-radius: 12px;
   box-shadow: 11px 30px 41px 0px rgba(0, 0, 0, 0.75);
-  flex: 1 1 calc(33.333% - 20px);
-  width: 220px;
+  flex: 1 1 100%;
+  min-width: 320px;
+  max-width: 420px;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   transition: transform 0.3s ease-in-out;
 }
 
@@ -208,7 +285,7 @@ p {
   border: none;
   padding: 12px 24px;
   font-size: 16px;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   border-radius: 30px;
   cursor: pointer;
   transition: 0.3s;
@@ -223,10 +300,10 @@ p {
 .edit-button,
 .delete-button {
   padding: 12px;
-  background-color: #0056b3;
-  font-size: 16px;
-  font-family: 'Poppins', sans-serif;
-  border-radius: 30px;
+  background-color: #04182e;
+  font-size: 12px;
+  font-family: "Poppins", sans-serif;
+  border-radius: 16px;
   cursor: pointer;
   transition: 0.3s;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -238,7 +315,7 @@ p {
 
 .edit-button:hover,
 .delete-button:hover {
-  background-color: #053f7e;
+  background-color: #020305;
 }
 
 .delete-button {

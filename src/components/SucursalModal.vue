@@ -2,104 +2,77 @@
   <div class="modal" v-if="isVisible">
     <div class="modal-content">
       <span class="close" @click="closeModal">&times;</span>
-      <h2>{{ isEdit ? 'Actualizar Sucursal' : 'Registrar Sucursal' }}</h2>
+      <h2>{{ isEdit ? "Actualizar Sucursal" : "Registrar Sucursal" }}</h2>
       <form @submit.prevent="submitForm">
         <div class="form-group">
           <label for="nombre">Nombre:</label>
-          <input type="text" id="nombre" v-model="sucursal.nombre" required />
+          <input type="text" id="nombre" v-model="sucursal.Nombre" required />
         </div>
 
         <div class="form-group">
           <label for="direccion">Dirección:</label>
-          <input type="text" id="direccion" v-model="sucursal.direccion" required />
+          <input type="text" id="direccion" v-model="sucursal.Direccion" required />
         </div>
 
         <div class="form-group">
           <label for="telefono">Teléfono:</label>
-          <input 
-            type="text" 
-            id="telefono" 
-            v-model="sucursal.telefono" 
-            required 
+          <input
+            type="text"
+            id="telefono"
+            v-model="sucursal.Telefono"
+            required
             pattern="[0-9]{10}"
             title="Ingrese un número de 10 dígitos"
           />
         </div>
 
         <div class="form-group">
-          <label for="gerenteEncargado">Gerente Encargado:</label>
-          <select 
-            id="gerenteEncargado" 
-            v-model="sucursal.responsable_id" 
+          <label for="email">Correo:</label>
+          <input
+            type="email"
+            id="correo"
+            v-model="sucursal.Correo_Electronico"
             required
-          >
-            <option value="">Seleccione un gerente</option>
-            <option 
-              v-for="gerente in gerentes" 
-              :key="gerente.id" 
-              :value="gerente.id"
+            title="Ingrese un correo válido"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="gerenteEncargado">Gerente Encargado:</label>
+          <input
+            type="text"
+            id="gerenteEncargado"
+            v-model="busquedaGerente"
+            placeholder="Buscar gerente..."
+            @input="buscarGerente"
+            class="input"
+          />
+          <ul v-if="gerentesFiltrados.length > 0" class="search-results">
+            <li
+              v-for="gerente in gerentesFiltrados"
+              :key="gerente.id"
+              @click="seleccionarGerente(gerente)"
+              class="search-item"
             >
-              {{ gerente.nombre_completo }}
-            </option>
-          </select>
+              {{ gerente.nombre_usuario }}
+            </li>
+          </ul>
         </div>
 
         <div class="form-group">
           <label for="capacidadMaxima">Capacidad Máxima:</label>
-          <input 
-            type="number" 
-            id="capacidadMaxima" 
-            v-model.number="sucursal.capacidad_maxima" 
+          <input
+            type="number"
+            id="capacidadMaxima"
+            v-model.number="sucursal.Capacidad_Maxima"
             min="1"
-            required 
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="horario">Horario:</label>
-          <input 
-            type="text" 
-            id="horario" 
-            v-model="sucursal.horario_disponibilidad" 
-            placeholder="Ej: L-V 9:00-18:00"
-            required 
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="detalles">Detalles:</label>
-          <textarea 
-            id="detalles" 
-            v-model="sucursal.detalles" 
-            placeholder="Ingrese detalles adicionales sobre la sucursal"
-            rows="3"
             required
-          ></textarea>
-        </div>
-
-        <div class="form-group" v-if="isEdit">
-          <label>Estatus:</label>
-          <div class="radio-group">
-            <label>
-              <input 
-                type="radio" 
-                v-model="sucursal.estatus" 
-                value="Activa" 
-              /> Activa
-            </label>
-            <label>
-              <input 
-                type="radio" 
-                v-model="sucursal.estatus" 
-                value="Inactiva" 
-              /> Inactiva
-            </label>
-          </div>
+          />
         </div>
 
         <div class="form-actions">
           <button type="button" @click="closeModal">Cancelar</button>
-          <button type="submit">{{ isEdit ? 'Actualizar' : 'Registrar' }}</button>
+          <button type="submit">{{ isEdit ? "Actualizar" : "Registrar" }}</button>
         </div>
       </form>
     </div>
@@ -107,6 +80,8 @@
 </template>
 
 <script>
+import api from "../api/api.js";
+
 export default {
   props: {
     isVisible: Boolean,
@@ -116,24 +91,18 @@ export default {
   data() {
     return {
       sucursal: {
-        nombre: '',
-        direccion: '',
-        telefono: '',
-        responsable_id: '',
-        capacidad_maxima: 0,
-        horario_disponibilidad: '',
-        detalles: '',
-        estatus: 'Activa',
+        Nombre: "",
+        Direccion: "",
+        Telefono: "",
+        Correo_Electronico: "",
+        Responsable_Id: 0,
+        Capacidad_Maxima: 0,
+        Estatus: "Activa",
       },
-      gerentes: [
-        { id: 1, nombre_completo: 'Juan Pérez' },
-        { id: 2, nombre_completo: 'María Gómez' },
-        { id: 3, nombre_completo: 'Carlos Sánchez' },
-      ],
+      busquedaGerente: "", // Campo para mostrar el nombre del gerente en el buscador
+      gerentes: [],
+      gerentesFiltrados: [],
     };
-  },
-  created() {
-    // Nada que cargar desde API
   },
   watch: {
     isVisible(newVal) {
@@ -142,24 +111,55 @@ export default {
         if (this.isEdit && this.sucursalData) {
           this.cargarDatosEdicion();
         }
+        this.cargarGerentes();
       }
     },
   },
   methods: {
+    async cargarGerentes() {
+      try {
+        const gerentes = await api.obtenerGerentes();
+        this.gerentes = gerentes;
+      } catch (error) {
+        console.error("Error al cargar gerentes:", error);
+      }
+    },
+    buscarGerente() {
+      const query = this.busquedaGerente.toLowerCase();
+      this.gerentesFiltrados = this.gerentes.filter((gerente) =>
+        gerente.nombre_usuario.toLowerCase().includes(query)
+      );
+    },
+    seleccionarGerente(gerente) {
+      this.sucursal.Responsable_Id = gerente.id;
+      this.busquedaGerente = gerente.nombre_usuario;
+      this.gerentesFiltrados = [];
+    },
     cargarDatosEdicion() {
+      // Cargar los datos de la sucursal en el formulario
       this.sucursal = {
-        nombre: this.sucursalData.nombre,
-        direccion: this.sucursalData.direccion,
-        telefono: this.sucursalData.telefono || '',
-        responsable_id: this.sucursalData.responsable_id,
-        capacidad_maxima: this.sucursalData.capacidad_maxima,
-        horario_disponibilidad: this.sucursalData.horario_disponibilidad,
-        detalles: this.sucursalData.detalles || '',
-        estatus: this.sucursalData.estatus,
+        id: this.sucursalData.id,
+        Nombre: this.sucursalData.Nombre,
+        Direccion: this.sucursalData.Direccion,
+        Telefono: this.sucursalData.Telefono || "",
+        Correo_Electronico: this.sucursalData.Correo_Electronico || "",
+        Responsable_Id: this.sucursalData.Responsable_Id,
+        Capacidad_Maxima: this.sucursalData.Capacidad_Maxima,
+        Estatus: this.sucursalData.Estatus,
       };
+
+      // Buscar el nombre del gerente basado en el Responsable_Id
+      const gerente = this.gerentes.find(
+        (g) => g.id === this.sucursalData.Responsable_Id
+      );
+      if (gerente) {
+        this.busquedaGerente = gerente.nombre_usuario; // Mostrar el nombre del gerente en el buscador
+      } else {
+        this.busquedaGerente = ""; // Si no se encuentra, dejar vacío
+      }
     },
     closeModal() {
-      this.$emit('close');
+      this.$emit("close");
     },
     async submitForm() {
       if (!this.validarFormulario()) {
@@ -167,42 +167,45 @@ export default {
       }
 
       const datosParaEnviar = {
-        nombre: this.sucursal.nombre.trim(),
-        direccion: this.sucursal.direccion.trim(),
-        telefono: this.sucursal.telefono.trim(),
-        responsable_id: parseInt(this.sucursal.responsable_id, 10),
-        capacidad_maxima: parseInt(this.sucursal.capacidad_maxima, 10),
-        horario_disponibilidad: this.sucursal.horario_disponibilidad.trim(),
-        detalles: this.sucursal.detalles.trim(),
-        estatus: this.sucursal.estatus,
+        id: this.sucursal.id,
+        Nombre: this.sucursal.Nombre.trim(),
+        Direccion: this.sucursal.Direccion.trim(),
+        Telefono: this.sucursal.Telefono.trim(),
+        Correo_Electronico: this.sucursal.Correo_Electronico.trim(),
+        Responsable_Id: parseInt(this.sucursal.Responsable_Id, 10),
+        Capacidad_Maxima: parseInt(this.sucursal.Capacidad_Maxima, 10),
+        Estatus: this.sucursal.Estatus,
       };
 
-      console.log('Simulación de envío al backend:', datosParaEnviar);
+      console.log("Datos enviados al backend:", datosParaEnviar);
 
-      // Simula una espera como si fuera una petición real
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      if (this.isEdit) {
-        this.$emit('success', 'Sucursal actualizada correctamente (simulada)');
-      } else {
-        this.$emit('success', 'Sucursal registrada correctamente (simulada)');
+      try {
+        if (this.isEdit) {
+          this.$emit("editar", datosParaEnviar); // Emitir evento para edición
+        } else {
+          this.$emit("crear", datosParaEnviar); // Emitir evento para creación
+        }
+        this.closeModal();
+      } catch (error) {
+        console.error("Error al guardar sucursal:", error.response?.data || error);
+        this.$emit("error", "Error al guardar la sucursal");
       }
-
-      this.closeModal();
-      this.$emit('refresh');
     },
     validarFormulario() {
       const errores = [];
 
-      if (!this.sucursal.nombre?.trim()) errores.push('El nombre es requerido');
-      if (!this.sucursal.direccion?.trim()) errores.push('La dirección es requerida');
-      if (!this.sucursal.responsable_id) errores.push('Debe seleccionar un gerente responsable');
-      if (!this.sucursal.capacidad_maxima || this.sucursal.capacidad_maxima <= 0) errores.push('La capacidad máxima debe ser mayor a 0');
-      if (!this.sucursal.horario_disponibilidad?.trim()) errores.push('El horario es requerido');
-      if (!this.sucursal.detalles?.trim()) errores.push('Los detalles son requeridos');
+      if (!this.sucursal.Nombre?.trim()) errores.push("El nombre es requerido");
+      if (!this.sucursal.Direccion?.trim()) errores.push("La dirección es requerida");
+      if (!this.sucursal.Telefono?.trim()) errores.push("El teléfono es requerido");
+      if (!this.sucursal.Correo_Electronico?.trim())
+        errores.push("El correo electrónico es requerido");
+      if (!this.sucursal.Responsable_Id)
+        errores.push("Debe seleccionar un gerente responsable");
+      if (!this.sucursal.Capacidad_Maxima || this.sucursal.Capacidad_Maxima <= 0)
+        errores.push("La capacidad máxima debe ser mayor a 0");
 
       if (errores.length > 0) {
-        this.$emit('error', errores.join(', '));
+        alert(errores.join("\n"));
         return false;
       }
 
@@ -210,15 +213,16 @@ export default {
     },
     resetForm() {
       this.sucursal = {
-        nombre: '',
-        direccion: '',
-        telefono: '',
-        responsable_id: '',
-        capacidad_maxima: 0,
-        horario_disponibilidad: '',
-        detalles: '',
-        estatus: 'Activa',
+        Nombre: "",
+        Direccion: "",
+        Telefono: "",
+        Correo_Electronico: "",
+        Responsable_Id: 0,
+        Capacidad_Maxima: 0,
+        Estatus: "Activa",
       };
+      this.busquedaGerente = "";
+      this.gerentesFiltrados = [];
     },
   },
 };
@@ -247,6 +251,116 @@ export default {
   max-height: 80%;
   overflow-y: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.close:hover {
+  color: #333;
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #2c3e50;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.search-results {
+  list-style: none;
+  padding: 0;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.search-item {
+  padding: 8px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.search-item:hover {
+  background-color: #f5f5f5;
+}
+
+.search-item:last-child {
+  border-bottom: none;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.form-actions button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Botón Cancelar (rojo) */
+.form-actions button:first-child {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.form-actions button:first-child:hover {
+  background-color: #c0392b;
+}
+
+/* Botón Registrar/Actualizar (azul marino) */
+.form-actions button:last-child {
+  background-color: #2c3e50;
+  color: white;
+}
+
+.form-actions button:last-child:hover {
+  background-color: #1a252f;
 }
 
 textarea {
@@ -258,45 +372,12 @@ textarea {
   resize: vertical;
 }
 
-.close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 24px;
-  cursor: pointer;
+/* Estilos para validación */
+input:invalid {
+  border-color: #e74c3c;
 }
 
-h2 {
-  margin-bottom: 20px;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-}
-
-button {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 100%;
-}
-
-button:hover {
-  background-color: #0056b3;
+input:valid {
+  border-color: #2ecc71;
 }
 </style>

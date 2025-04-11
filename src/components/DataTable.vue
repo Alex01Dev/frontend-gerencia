@@ -1,13 +1,18 @@
 <template>
   <div class="data-table">
-    <input type="text" v-model="searchQuery" placeholder="Buscar..." class="search-input" />
+    <input
+      type="text"
+      v-model="searchQuery"
+      placeholder="Buscar..."
+      class="search-input"
+    />
 
     <table>
       <thead>
         <tr>
           <th v-for="(header, index) in headers" :key="index" @click="sortTable(index)">
             {{ header }}
-            <span v-if="sortKey === index">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+            <span v-if="sortKey === index">{{ sortOrder === "asc" ? "▲" : "▼" }}</span>
           </th>
         </tr>
       </thead>
@@ -25,9 +30,17 @@
     </table>
 
     <div class="pagination">
-      <button class="pagination-button" @click="prevPage" :disabled="currentPage === 1">Anterior</button>
+      <button class="pagination-button" @click="prevPage" :disabled="currentPage === 1">
+        Anterior
+      </button>
       <span>Página {{ currentPage }} de {{ totalPages }}</span>
-      <button class="pagination-button" @click="nextPage" :disabled="currentPage === totalPages">Siguiente</button>
+      <button
+        class="pagination-button"
+        @click="nextPage"
+        :disabled="currentPage === totalPages"
+      >
+        Siguiente
+      </button>
     </div>
   </div>
 </template>
@@ -35,41 +48,36 @@
 <script>
 export default {
   props: {
-    data: Array,
     headers: Array,
+    data: Array,
   },
   data() {
     return {
-      searchQuery: '',
+      searchQuery: "",
       currentPage: 1,
       itemsPerPage: 5,
       sortKey: null,
-      sortOrder: 'asc',
+      sortOrder: "asc",
     };
   },
   computed: {
     filteredData() {
-      return this.data.filter(item => {
-        return Object.values(item).some(value =>
+      return this.data.filter((item) =>
+        Object.values(item).some((value) =>
           String(value).toLowerCase().includes(this.searchQuery.toLowerCase())
-        );
-      });
+        )
+      );
     },
     sortedData() {
-      if (this.sortKey === null) {
-        return this.filteredData;
-      }
-      const clonedData = [...this.filteredData];
-      return clonedData.sort((a, b) => {
-        let result = 0;
+      if (this.sortKey === null) return this.filteredData;
+      const cloned = [...this.filteredData];
+      return cloned.sort((a, b) => {
         const aValue = Object.values(a)[this.sortKey];
         const bValue = Object.values(b)[this.sortKey];
-        if (aValue < bValue) {
-          result = -1;
-        } else if (aValue > bValue) {
-          result = 1;
-        }
-        return this.sortOrder === 'asc' ? result : -result;
+        let result = 0;
+        if (aValue < bValue) result = -1;
+        else if (aValue > bValue) result = 1;
+        return this.sortOrder === "asc" ? result : -result;
       });
     },
     paginatedData() {
@@ -84,21 +92,17 @@ export default {
   methods: {
     sortTable(index) {
       if (this.sortKey === index) {
-        this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+        this.sortOrder = this.sortOrder === "asc" ? "desc" : "asc";
       } else {
         this.sortKey = index;
-        this.sortOrder = 'asc';
+        this.sortOrder = "asc";
       }
     },
     prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--;
-      }
+      if (this.currentPage > 1) this.currentPage--;
     },
     nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++;
-      }
+      if (this.currentPage < this.totalPages) this.currentPage++;
     },
   },
 };
@@ -122,7 +126,8 @@ table {
   border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
   padding: 12px;
   border: 1px solid #ddd;
   text-align: left;

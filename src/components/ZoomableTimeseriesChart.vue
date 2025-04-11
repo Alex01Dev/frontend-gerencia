@@ -1,20 +1,19 @@
 <template>
-  <div id="chart">
-    <ApexChart
-      v-if="series.length > 0"
-      :key="chartKey"
-      type="pie"
-      :options="chartOptions"
-      :series="series"
-    ></ApexChart>
+  <div id="chart" v-if="chartReady && series.length > 0">
+    <ApexChart :key="chartKey" type="pie" :options="chartOptions" :series="series" />
   </div>
 </template>
 
 <script>
-import { computed, ref, watch } from 'vue';
+import { ref, computed, watch, onMounted, nextTick } from "vue";
+import { websocketService } from "@/api/webSocket";
+import VueApexCharts from "vue3-apexcharts";
 
 export default {
-  name: 'SimplePieChart',
+  name: "SimplePieChart",
+  components: {
+    ApexChart: VueApexCharts,
+  },
   props: {
     data: {
       type: Array,
@@ -23,53 +22,112 @@ export default {
   },
   setup(props) {
     const chartKey = ref(0);
-    
+    const chartReady = ref(false);
+    const localData = ref([...props.data]);
+
+    // Agrupamos los datos por tipo de transacción y sumamos el monto
     const groupedData = computed(() => {
-      return props.data.reduce((acc, item) => {
-        const tipo = item.tipoTransaccion || 'Sin tipo';
-        if (!acc[tipo]) {
-          acc[tipo] = 0;
+      if (!localData.value || localData.value.length === 0) {
+        console.warn("⚠️ No hay datos disponibles para agrupar. ");
+        return {};
+      }
+
+      return localData.value.reduce((acc, item) => {
+        const tipo = item.tipoTransaccion || "Sin tipo"; // Maneja casos donde no haya tipo
+        const monto = parseFloat(item.monto); // Asegúrate de que monto sea un número
+
+        // Verificar que monto sea un número válido
+        if (!isNaN(monto)) {
+          acc[tipo] = (acc[tipo] || 0) + monto;
         }
-        acc[tipo] += item.monto || 0;
+
         return acc;
       }, {});
     });
 
-    const series = computed(() => Object.values(groupedData.value));
-    const labels = computed(() => Object.keys(groupedData.value));
+    const series = computed(() => {
+      return Object.values(groupedData.value).map((value) => parseFloat(value));
+    });
+
+    const labels = computed(() => {
+      return Object.keys(groupedData.value);
+    });
 
     const chartOptions = computed(() => ({
       chart: {
-        width: '100%',
-        type: 'pie',
-        animations: {
-          enabled: true,
-        },
+        type: "pie",
+        height: 400,
+        width: 400,
+        animations: { enabled: true },
       },
       labels: labels.value,
       responsive: [
         {
           breakpoint: 480,
           options: {
-            chart: {
-              width: '100%',
-            },
-            legend: {
-              position: 'bottom',
-            },
+            chart: { width: "100%", height: 300 },
+            legend: { position: "bottom" },
           },
         },
       ],
     }));
 
-    watch(() => props.data, () => {
-      chartKey.value += 1;
-    }, { deep: true });
+    // --- WebSocket Listener ---
+    watch(
+      () => websocketService.transactions,
+      async (newVal) => {
+        console.log("🟡 Nuevos datos desde WebSocket:", newVal);
+
+        if (Array.isArray(newVal) && newVal.length > 0) {
+          localData.value = [...newVal]; // Actualizamos los datos locales
+          console.log("Datos locales antes de pasar a la gráfica:", localData.value);
+
+          chartKey.value = Date.now(); // Forzar rerender
+          await nextTick(); // Asegurarse de que el DOM esté actualizado
+          chartReady.value = true; // Activar la gráfica
+          console.log("🟢 Datos cargados en gráfica (watch)");
+        } else {
+          console.warn("⚠️ WebSocket aún no tiene datos válidos");
+          chartReady.value = false; // Desactivar la gráfica si no hay datos válidos
+        }
+      },
+      { immediate: true }
+    );
+
+    // --- On Mounted ---
+    onMounted(async () => {
+      console.log("🔵 Montando gráfica...");
+      console.log("🟡 Datos iniciales:", props.data); // Verifica los datos que se reciben como prop
+
+      // Asegúrate de que los datos recibidos no estén vacíos
+      if (Array.isArray(props.data) && props.data.length > 0) {
+        localData.value = [...props.data];
+        chartKey.value = Date.now(); // Forzar rerender
+        await nextTick();
+        chartReady.value = true; // Activar la gráfica
+        console.log("🟢 Datos cargados en gráfica (onMounted)");
+      } else {
+        console.warn("⚠️ No hay datos disponibles al montar el componente.");
+        chartReady.value = false;
+      }
+    });
+
+    // Logs adicionales para depuración
+    watch(
+      () => groupedData.value,
+      (newGroupedData) => {
+        console.log("🔍 Datos agrupados:", newGroupedData);
+        console.log("📊 Datos de la gráfica:", series.value);
+        console.log("📝 Etiquetas de la gráfica:", labels.value);
+      },
+      { immediate: true }
+    );
 
     return {
       series,
       chartOptions,
       chartKey,
+      chartReady,
     };
   },
 };
@@ -79,6 +137,8 @@ export default {
 #chart {
   width: 90%;
   min-height: 400px;
-  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

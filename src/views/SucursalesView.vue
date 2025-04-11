@@ -57,13 +57,8 @@ import ConfirmModal from "@/components/ModalComponent.vue";
 import api from "../api/api.js";
 
 export default {
-<<<<<<< HEAD
   components: { Menu, SucursalModal, ConfirmModal },
   name: "SucursalesView",
-=======
-  components: { Menu, SucursalModal, ConfirmModal, },
-  name: 'SucursalesView',
->>>>>>> 2d05e374c7fbd9024f59d2f2199dc4d8b9b2ecee
   data() {
     return {
       showModal: false,
@@ -111,7 +106,6 @@ export default {
         // Mapear campos del backend al formato del formulario
         this.currentSucursal = {
           id: sucursal.id,
-<<<<<<< HEAD
           Nombre: sucursal.Nombre,
           Direccion: sucursal.Direccion,
           Telefono: sucursal.Telefono,
@@ -132,18 +126,6 @@ export default {
           Capacidad_Maxima: 0,
           Estatus: "Activa",
         };
-=======
-          nombre: sucursal.Nombre,
-          direccion: sucursal.Direccion,
-          telefono: sucursal.Telefono,
-          correo_electronico: sucursal.Correo_Electronico,
-          responsable_id: sucursal.Responsable_Nombre , // <- Usa ID, no nombre
-          capacidad_maxima: sucursal.Capacidad_Maxima,
-          estatus: sucursal.Estatus
-        };
-      } else {
-        this.currentSucursal = null;
->>>>>>> 2d05e374c7fbd9024f59d2f2199dc4d8b9b2ecee
       }
 
       this.showModal = true;
@@ -269,7 +251,6 @@ export default {
   transition: transform 0.3s ease-in-out;
 }
 
-
 .sucursal-card:hover {
   transform: translateY(-5px);
 }
@@ -322,11 +303,7 @@ p {
   padding: 12px;
   background-color: #04182e;
   font-size: 12px;
-<<<<<<< HEAD
   font-family: "Poppins", sans-serif;
-=======
-  font-family: 'Poppins', sans-serif;
->>>>>>> 2d05e374c7fbd9024f59d2f2199dc4d8b9b2ecee
   border-radius: 16px;
   cursor: pointer;
   transition: 0.3s;

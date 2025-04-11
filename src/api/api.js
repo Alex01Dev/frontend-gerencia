@@ -115,6 +115,7 @@ export default {
       throw error;
     }
   },
+<<<<<<< HEAD
 
   
   
@@ -133,6 +134,8 @@ export default {
   //     throw error;
   //   }
   // },
+=======
+>>>>>>> 2d05e374c7fbd9024f59d2f2199dc4d8b9b2ecee
 
   async registrarSucursal(sucursalData) {
     try {
@@ -183,6 +186,7 @@ export default {
       throw error;
     }
   },
+  
 
     // Último método del archivo, justo antes de cerrar el export default
     async obtenerUsuarioConPersona() {

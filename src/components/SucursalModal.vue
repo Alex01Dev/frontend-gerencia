@@ -16,6 +16,7 @@
 
         <div class="form-group">
           <label for="telefono">Teléfono:</label>
+<<<<<<< HEAD
           <input
             type="text"
             id="telefono"
@@ -68,6 +69,43 @@
             min="1"
             required
           />
+=======
+          <input type="text" id="telefono" v-model="sucursal.telefono" required pattern="[0-9]{10}"
+            title="Ingrese un número de 10 dígitos" />
+        </div>
+        <div class="form-group">
+          <label for="email">Correo:</label>
+          <input type="email" id="correo" v-model="sucursal.correo_electronico" required
+            title="Ingrese un correo válido" />
+        </div>
+
+        <div class="form-group">
+  <label for="gerenteEncargado">Gerente Encargado:</label>
+  <input
+    type="text"
+    id="gerenteEncargado"
+    v-model="busquedaGerente"
+    placeholder="Buscar gerente..."
+    @input="buscarGerente"
+    class="input"
+  />
+  
+  <ul v-if="gerentesFiltrados.length > 0" class="search-results">
+    <li
+      v-for="gerente in gerentesFiltrados"
+      :key="gerente.id"
+      @click="seleccionarGerente(gerente)"
+      class="search-item"
+    >
+      {{ gerente.nombre_usuario }}
+    </li>
+  </ul>
+</div>
+
+        <div class="form-group">
+          <label for="capacidadMaxima">Capacidad Máxima:</label>
+          <input type="number" id="capacidadMaxima" v-model.number="sucursal.capacidad_maxima" min="1" required />
+>>>>>>> 2d05e374c7fbd9024f59d2f2199dc4d8b9b2ecee
         </div>
 
         <div class="form-actions">
@@ -80,8 +118,13 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 import api from "../api/api.js";
 
+=======
+
+import api from "../api/api.js";
+>>>>>>> 2d05e374c7fbd9024f59d2f2199dc4d8b9b2ecee
 export default {
   props: {
     isVisible: Boolean,
@@ -91,6 +134,7 @@ export default {
   data() {
     return {
       sucursal: {
+<<<<<<< HEAD
         Nombre: "",
         Direccion: "",
         Telefono: "",
@@ -102,11 +146,25 @@ export default {
       busquedaGerente: "", // Campo para mostrar el nombre del gerente en el buscador
       gerentes: [],
       gerentesFiltrados: [],
+=======
+        nombre: '',
+        direccion: '',
+        telefono: '',
+        correo_electronico: '',
+        responsable_id: '',
+        capacidad_maxima: 0,
+        estatus: 'Activa',
+      },
+      busquedaGerente: '',  // Lo que el usuario escribe en el input
+    gerentes: [],  // Lista completa de gerentes
+    gerentesFiltrados: [],
+>>>>>>> 2d05e374c7fbd9024f59d2f2199dc4d8b9b2ecee
     };
   },
   watch: {
     isVisible(newVal) {
       if (newVal) {
+        console.log("Datos recibidos en modal:", this.sucursalData); // <- DEBUG
         this.resetForm();
         if (this.isEdit && this.sucursalData) {
           this.cargarDatosEdicion();
@@ -138,6 +196,7 @@ export default {
     cargarDatosEdicion() {
       // Cargar los datos de la sucursal en el formulario
       this.sucursal = {
+<<<<<<< HEAD
         id: this.sucursalData.id,
         Nombre: this.sucursalData.Nombre,
         Direccion: this.sucursalData.Direccion,
@@ -146,6 +205,15 @@ export default {
         Responsable_Id: this.sucursalData.Responsable_Id,
         Capacidad_Maxima: this.sucursalData.Capacidad_Maxima,
         Estatus: this.sucursalData.Estatus,
+=======
+        nombre: this.sucursalData.nombre,
+        direccion: this.sucursalData.direccion,
+        telefono: this.sucursalData.telefono || '',
+        correo_electronico: this.sucursalData.correo_electronico || '',
+        responsable_id: this.sucursalData.responsable_id,
+        capacidad_maxima: this.sucursalData.capacidad_maxima,
+        estatus: this.sucursalData.estatus,
+>>>>>>> 2d05e374c7fbd9024f59d2f2199dc4d8b9b2ecee
       };
 
       // Buscar el nombre del gerente basado en el Responsable_Id
@@ -167,6 +235,7 @@ export default {
       }
 
       const datosParaEnviar = {
+<<<<<<< HEAD
         id: this.sucursal.id,
         Nombre: this.sucursal.Nombre.trim(),
         Direccion: this.sucursal.Direccion.trim(),
@@ -189,11 +258,36 @@ export default {
       } catch (error) {
         console.error("Error al guardar sucursal:", error.response?.data || error);
         this.$emit("error", "Error al guardar la sucursal");
+=======
+        nombre: this.sucursal.nombre.trim(),
+        direccion: this.sucursal.direccion.trim(),
+        telefono: this.sucursal.telefono.trim(),
+        responsable_id: parseInt(this.sucursal.responsable_id, 10),
+        capacidad_maxima: parseInt(this.sucursal.capacidad_maxima, 10),
+        estatus: this.sucursal.estatus,
+      };
+
+      try {
+        if (this.isEdit) {
+          await this.actualizarSucursal(this.sucursalData.id, datosParaEnviar);
+
+          this.$emit("success", "Sucursal actualizada correctamente");
+        } else {
+          // Aquí iría tu lógica para registrar nueva sucursal
+          console.log("Lógica de registro no implementada aún");
+        }
+
+        this.closeModal();
+        this.$emit("refresh");
+      } catch (error) {
+        this.$emit("error", "Error al actualizar la sucursal");
+>>>>>>> 2d05e374c7fbd9024f59d2f2199dc4d8b9b2ecee
       }
     },
     validarFormulario() {
       const errores = [];
 
+<<<<<<< HEAD
       if (!this.sucursal.Nombre?.trim()) errores.push("El nombre es requerido");
       if (!this.sucursal.Direccion?.trim()) errores.push("La dirección es requerida");
       if (!this.sucursal.Telefono?.trim()) errores.push("El teléfono es requerido");
@@ -203,6 +297,12 @@ export default {
         errores.push("Debe seleccionar un gerente responsable");
       if (!this.sucursal.Capacidad_Maxima || this.sucursal.Capacidad_Maxima <= 0)
         errores.push("La capacidad máxima debe ser mayor a 0");
+=======
+      if (!this.sucursal.nombre?.trim()) errores.push('El nombre es requerido');
+      if (!this.sucursal.direccion?.trim()) errores.push('La dirección es requerida');
+      if (!this.sucursal.responsable_id) errores.push('Debe seleccionar un gerente responsable');
+      if (!this.sucursal.capacidad_maxima || this.sucursal.capacidad_maxima <= 0) errores.push('La capacidad máxima debe ser mayor a 0');
+>>>>>>> 2d05e374c7fbd9024f59d2f2199dc4d8b9b2ecee
 
       if (errores.length > 0) {
         alert(errores.join("\n"));
@@ -224,7 +324,23 @@ export default {
       this.busquedaGerente = "";
       this.gerentesFiltrados = [];
     },
+    async actualizarSucursal(sucursalId, sucursalData) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await api.put(`/sucursales/${sucursalId}`, sucursalData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return response.data;
+      } catch (error) {
+        console.error("Error al actualizar sucursal:", error.response?.data || error);
+        throw error;
+      }
+    },
   },
+
 };
 </script>
 
